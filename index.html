@@ -4,18 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   
+  <!-- 1. SEO Principal -->
   <title>Churrascômetro & Pix | Calculadora de Rateio de Churrasco</title>
   <meta name="description" content="Organize seu churrasco sem dor de cabeça. Calcule o rateio justo separando quem só come de quem bebe, controle a lista de presença e gere o QR Code Pix na hora." />
   <meta name="keywords" content="rateio de churrasco, calculadora de churrasco, churrascômetro, dividir conta churrasco, qr code pix churrasco, organizar churrasco" />
   <meta name="author" content="RevLevih" />
   <meta name="robots" content="index, follow" />
 
+  <!-- 2. Open Graph / WhatsApp -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="🥩 Churrascômetro & Rateio Pix" />
   <meta property="og:description" content="Calcule o rateio proporcional (Só Comida vs. Comida + Bebida), acompanhe quem já pagou e gere o QR Code Pix instantaneamente." />
   <meta property="og:image" content="icon.png" />
   <meta property="og:locale" content="pt_BR" />
 
+  <!-- 3. PWA / Mobile -->
   <meta name="theme-color" content="#ea580c" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -23,10 +26,8 @@
   <link rel="icon" type="image/png" href="icon.png" />
   <link rel="apple-touch-icon" href="icon.png" />
 
-  <!-- Biblioteca para desenhar o QR Code -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}</script>
+  <!-- Biblioteca QR Code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     :root {
@@ -52,7 +53,7 @@
       color: var(--text);
       display: flex;
       justify-content: center;
-      padding: 20px 12px;
+      padding: 20px 12px 40px;
     }
 
     .container {
@@ -74,31 +75,98 @@
     .header-brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
+      gap: 8px;
       margin-bottom: 6px;
     }
 
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .header-brand img {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       border-radius: 10px;
     }
 
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-salvo {
+      font-size: 0.7rem;
+      background: #dcfce7;
+      color: #15803d;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .btn-ajuda-topo {
+      background: #fff7ed;
+      color: var(--primary);
+      border: 1px solid #fed7aa;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-ajuda-topo:hover {
+      background: #ffedd5;
+    }
+
     h1 {
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       color: var(--primary);
     }
 
     h2 {
-      font-size: 1.1rem;
+      font-size: 1.08rem;
       margin-bottom: 12px;
       color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     p.subtitle {
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .top-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
       margin-bottom: 16px;
+    }
+
+    .btn-acao-topo {
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+
+    .btn-acao-topo.salvar {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
     }
 
     .grid {
@@ -135,6 +203,18 @@
 
     input:focus, select:focus {
       border-color: var(--primary);
+    }
+
+    .aviso-data {
+      grid-column: span 2;
+      font-size: 0.78rem;
+      color: #b91c1c;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      padding: 8px 10px;
+      border-radius: 8px;
+      display: none;
+      font-weight: 600;
     }
 
     .add-row {
@@ -303,342 +383,201 @@
       font-weight: 600;
       cursor: pointer;
     }
+
+    /* Histórico de Churrascos */
+    .lista-historico {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item-historico {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fafafa;
+      gap: 10px;
+    }
+
+    .info-historico strong {
+      display: block;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .info-historico span {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .acoes-historico {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-hist-abrir {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-hist-del {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    /* Seção de Ajuda (Sanfona / FAQ no rodapé) */
+    details.faq-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      background: #fafafa;
+    }
+
+    details.faq-item summary {
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      color: var(--text);
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    details.faq-item summary::after {
+      content: "➕";
+      font-size: 0.75rem;
+      color: var(--primary);
+    }
+
+    details.faq-item[open] summary::after {
+      content: "➖";
+    }
+
+    details.faq-item p {
+      margin-top: 8px;
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    /* Modal de Ajuda Passo a Passo */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 999;
+    }
+
+    .modal-overlay.aberto {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      padding: 20px;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h3 {
+      font-size: 1.15rem;
+      color: var(--primary);
+    }
+
+    .btn-fechar-modal {
+      background: #f1f5f9;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .passo-ajuda {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+
+    .passo-numero {
+      background: var(--primary);
+      color: white;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .passo-texto strong {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .passo-texto span {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.4;
+      display: block;
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
+    <!-- Bloco 1: Evento e Gastos -->
     <div class="card">
       <div class="header-brand">
-        <img src="icon.png" alt="Ícone Churrasco" onerror="this.style.display='none'" />
-        <div>
-          <h1>Churrascômetro & Pix</h1>
+        <div class="header-left">
+          <img src="icon.png" alt="Ícone Churrasco" onerror="this.style.display='none'" />
+          <h1>Churrascômetro</h1>
+        </div>
+        <div class="header-right">
+          <span class="badge-salvo" id="badgeSalvo">✓ Salvo</span>
+          <button type="button" class="btn-ajuda-topo" id="btnAbrirAjuda">❓ Como Usar</button>
         </div>
       </div>
-      <p class="subtitle">Organize os participantes, edite o consumo e gere o Pix.</p>
+      <p class="subtitle">Seus dados e participantes ficam salvos automaticamente no aparelho.</p>
 
-      <div class="grid">
-        <div class="field full-width">
-          <label>Nome do Evento</label>
-          <input type="text" id="titulo" value="Churrasco da Galera" />
-        </div>
-
-        <div class="field">
-          <label>Data (DD/MM/AAAA)</label>
-          <input type="date" id="dataEvento" />
-        </div>
-
-        <div class="field">
-          <label>Horário</label>
-          <input type="time" id="horaEvento" value="12:00" />
-        </div>
-
-        <div class="field">
-          <label>Total Comida (R$)</label>
-          <input type="number" id="gastoComida" min="0" step="10" value="300" />
-        </div>
-
-        <div class="field">
-          <label>Total Bebida (R$)</label>
-          <input type="number" id="gastoBebida" min="0" step="10" value="180" />
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>👥 Lista de Participantes</h2>
-      <div class="add-row">
-        <input type="text" id="novoNome" placeholder="Nome do convidado" />
-        <select id="novoTipo">
-          <option value="Comida + Bebida">Comida + Bebida</option>
-          <option value="Só Comida">Só Comida</option>
-        </select>
-        <button type="button" class="btn-add" id="btnAddParticipante">➕</button>
-      </div>
-
-      <div id="listaContainer" class="lista-participantes"></div>
-    </div>
-
-    <div class="card">
-      <h2>📊 Rateio e Recebimento Pix</h2>
-
-      <div class="grid" style="margin-bottom: 12px;">
-        <div class="field">
-          <label>Recebedor (Nome)</label>
-          <input type="text" id="nomePix" value="ORGANIZADOR" maxlength="25" />
-        </div>
-        <div class="field">
-          <label>Chave Pix</label>
-          <input type="text" id="chavePix" placeholder="Digite CPF, Celular ou Email" value="" />
-        </div>
-      </div>
-
-      <p style="font-size: 0.8rem; color: var(--muted);">Clique na cota para alternar o QR Code:</p>
-      <div class="cards-rateio">
-        <div class="card-opcao active" id="btnOptComida">
-          <span>🍽️ Só Comida</span>
-          <strong id="valSoComida">R$ 0,00</strong>
-        </div>
-
-        <div class="card-opcao" id="btnOptBebida">
-          <span>🍻 Comida + Bebida</span>
-          <strong id="valComidaBebida">R$ 0,00</strong>
-        </div>
-      </div>
-
-      <div class="balanco-bar">
-        <span id="txtArrecadado">Arrecadado: R$ 0,00</span>
-        <span id="txtFaltam" style="color: var(--primary);">Faltam: R$ 0,00</span>
-      </div>
-
-      <div class="qr-box">
-        <span id="qrDescricao" style="font-size: 0.85rem; font-weight: 600;">QR Code Pix</span>
-        <div id="qrcode"></div>
-        <button type="button" class="btn-copia-cola" id="btnCopiarPix">📋 Copiar Pix Copia e Cola</button>
-      </div>
-
-      <button type="button" class="btn-whats" id="btnEnviarWhats">📲 Compartilhar Lista no WhatsApp</button>
-    </div>
-  </div>
-
-  <script>
-    let participantes = [];
-    let categoriaAtual = 'comida';
-    let payloadPixAtual = '';
-
-    // Define a data atual com segurança
-    try {
-      const hoje = new Date().toISOString().split('T')[0];
-      document.getElementById('dataEvento').value = hoje;
-    } catch (e) {}
-
-    function emv(id, val) {
-      return id + val.length.toString().padStart(2, '0') + val;
-    }
-
-    function crc16(str) {
-      let crc = 0xFFFF;
-      for (let i = 0; i < str.length; i++) {
-        crc ^= str.charCodeAt(i) << 8;
-        for (let j = 0; j < 8; j++) {
-          crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
-        }
-      }
-      return crc.toString(16).toUpperCase().padStart(4, '0');
-    }
-
-    function gerarBRCode(chave, nome, valor) {
-      chave = chave.trim();
-      nome = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().substring(0, 25).toUpperCase();
-      const valStr = valor > 0 ? valor.toFixed(2) : '';
-      const merchant = emv('00', 'BR.GOV.BCB.PIX') + emv('01', chave);
-      let payload = 
-        emv('00', '01') +
-        emv('26', merchant) +
-        emv('52', '0000') +
-        emv('53', '986') +
-        (valStr ? emv('54', valStr) : '') +
-        emv('58', 'BR') +
-        emv('59', nome || 'RECEBEDOR') +
-        emv('60', 'BRASIL') +
-        emv('62', emv('05', '***')) +
-        '6304';
-      return payload + crc16(payload);
-    }
-
-    function adicionarParticipante() {
-      const inputNome = document.getElementById('novoNome');
-      const selectTipo = document.getElementById('novoTipo');
-      const nome = inputNome.value.trim();
-      if (!nome) {
-        inputNome.focus();
-        return;
-      }
-
-      participantes.push({
-        nome: nome,
-        tipo: selectTipo.value,
-        pago: false
-      });
-
-      inputNome.value = '';
-      inputNome.focus();
-      atualizarTudo();
-    }
-
-    window.alterarTipo = function(index, novoTipo) {
-      participantes[index].tipo = novoTipo;
-      atualizarTudo();
-    };
-
-    window.alternarPago = function(index) {
-      participantes[index].pago = !participantes[index].pago;
-      atualizarTudo();
-    };
-
-    window.removerParticipante = function(index) {
-      participantes.splice(index, 1);
-      atualizarTudo();
-    };
-
-    function atualizarTudo() {
-      const comida = parseFloat(document.getElementById('gastoComida').value) || 0;
-      const bebida = parseFloat(document.getElementById('gastoBebida').value) || 0;
-
-      const qtdSoComida = participantes.filter(p => p.tipo === 'Só Comida').length;
-      const qtdComidaBebida = participantes.filter(p => p.tipo === 'Comida + Bebida').length;
-      const totalComem = qtdSoComida + qtdComidaBebida;
-      const totalBebem = qtdComidaBebida;
-
-      const cotaComida = totalComem > 0 ? (comida / totalComem) : 0;
-      const cotaBebida = totalBebem > 0 ? (bebida / totalBebem) : 0;
-
-      const vComida = cotaComida;
-      const vComidaBebida = cotaComida + cotaBebida;
-
-      document.getElementById('valSoComida').innerText = `R$ ${vComida.toFixed(2).replace('.', ',')}`;
-      document.getElementById('valComidaBebida').innerText = `R$ ${vComidaBebida.toFixed(2).replace('.', ',')}`;
-
-      const container = document.getElementById('listaContainer');
-      container.innerHTML = '';
-
-      if (participantes.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:#64748b; text-align:center; padding:8px;">Nenhum participante adicionado ainda. Digite um nome acima e clique em ➕.</p>';
-      } else {
-        participantes.forEach((p, idx) => {
-          const valorPessoa = p.tipo === 'Só Comida' ? vComida : vComidaBebida;
-          const div = document.createElement('div');
-          div.className = `item-participante ${p.pago ? 'pago' : ''}`;
-          div.innerHTML = `
-            <input type="checkbox" ${p.pago ? 'checked' : ''} onchange="window.alternarPago(${idx})" title="Marcar pago" />
-            <strong>${p.nome}</strong>
-            <select onchange="window.alterarTipo(${idx}, this.value)">
-              <option value="Comida + Bebida" ${p.tipo === 'Comida + Bebida' ? 'selected' : ''}>Comida + Bebida</option>
-              <option value="Só Comida" ${p.tipo === 'Só Comida' ? 'selected' : ''}>Só Comida</option>
-            </select>
-            <span class="valor-tag" style="color: ${p.pago ? '#16a34a' : '#0f172a'}">
-              ${p.pago ? '✅ Pago' : 'R$ ' + valorPessoa.toFixed(2).replace('.', ',')}
-            </span>
-            <button type="button" class="btn-del" onclick="window.removerParticipante(${idx})">❌</button>
-          `;
-          container.appendChild(div);
-        });
-      }
-
-      let arrecadado = 0;
-      participantes.forEach(p => {
-        if (p.pago) {
-          arrecadado += (p.tipo === 'Só Comida' ? vComida : vComidaBebida);
-        }
-      });
-      const totalGasto = comida + bebida;
-      const faltam = Math.max(0, totalGasto - arrecadado);
-
-      document.getElementById('txtArrecadado').innerText = `Arrecadado: R$ ${arrecadado.toFixed(2).replace('.', ',')}`;
-      document.getElementById('txtFaltam').innerText = faltam > 0 ? `Faltam: R$ ${faltam.toFixed(2).replace('.', ',')}` : 'Quitado! 🎉';
-
-      renderizarPix(vComida, vComidaBebida);
-    }
-
-    function renderizarPix(vComida, vComidaBebida) {
-      const chave = document.getElementById('chavePix').value;
-      const nome = document.getElementById('nomePix').value || 'ORGANIZADOR';
-      const valor = categoriaAtual === 'comida' ? vComida : vComidaBebida;
-
-      document.getElementById('qrDescricao').innerText = `QR Code: ${categoriaAtual === 'comida' ? 'Só Comida' : 'Comida + Bebida'} (R$ ${valor.toFixed(2).replace('.', ',')})`;
-
-      const qrContainer = document.getElementById('qrcode');
-      qrContainer.innerHTML = '';
-
-      if (!chave.trim()) {
-        qrContainer.innerHTML = '<span style="font-size:0.8rem; color:#ea580c; font-weight:600;">👆 Digite uma Chave Pix no campo acima para exibir o QR Code</span>';
-        payloadPixAtual = '';
-        return;
-      }
-
-      payloadPixAtual = gerarBRCode(chave, nome, valor);
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(qrContainer, {
-          text: payloadPixAtual,
-          width: 150,
-          height: 150
-        });
-      } else {
-        qrContainer.innerHTML = '<span style="font-size:0.78rem; color:#64748b;">Código Pix pronto para copiar abaixo:</span>';
-      }
-    }
-
-    // Eventos dos botões
-    document.getElementById('btnAddParticipante').addEventListener('click', adicionarParticipante);
-
-    document.getElementById('novoNome').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        adicionarParticipante();
-      }
-    });
-
-    document.getElementById('btnOptComida').addEventListener('click', () => {
-      categoriaAtual = 'comida';
-      document.getElementById('btnOptComida').classList.add('active');
-      document.getElementById('btnOptBebida').classList.remove('active');
-      atualizarTudo();
-    });
-
-    document.getElementById('btnOptBebida').addEventListener('click', () => {
-      categoriaAtual = 'bebida';
-      document.getElementById('btnOptBebida').classList.add('active');
-      document.getElementById('btnOptComida').classList.remove('active');
-      atualizarTudo();
-    });
-
-    document.getElementById('btnCopiarPix').addEventListener('click', () => {
-      if (!payloadPixAtual) return alert('Digite uma chave Pix primeiro no campo "Chave Pix".');
-      navigator.clipboard.writeText(payloadPixAtual).then(() => {
-        alert('Código Pix Copia e Cola copiado!');
-      });
-    });
-
-    document.getElementById('btnEnviarWhats').addEventListener('click', () => {
-      const titulo = document.getElementById('titulo').value || 'Churrasco';
-      const rawData = document.getElementById('dataEvento').value;
-      const hora = document.getElementById('horaEvento').value;
-      const chave = document.getElementById('chavePix').value;
-      const vComida = document.getElementById('valSoComida').innerText;
-      const vBebida = document.getElementById('valComidaBebida').innerText;
-
-      let dataFmt = 'A definir';
-      if (rawData) {
-        const [ano, mes, dia] = rawData.split('-');
-        dataFmt = `${dia}/${mes}/${ano} às ${hora}`;
-      }
-
-      const listaStr = participantes.length > 0
-        ? participantes.map(p => `- ${p.nome} (${p.tipo}): ${p.pago ? '[PAGO ✅]' : '[PENDENTE]'}`).join('\n')
-        : 'Nenhum participante na lista ainda.';
-
-      const msg = 
-`🥩 *${titulo}*
-📅 *Data:* ${dataFmt}
-
-📊 *Valores do Rateio:*
-🍽️ *Só Comida:* ${vComida}
-🍻 *Comida + Bebida:* ${vBebida}
-
-👥 *Participantes:*
-${listaStr}
-${chave ? `\n💳 *Chave Pix:* ${chave}` : ''}
-
-Favor enviar o comprovante para darmos baixa! 🔥`;
-
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-    });
-
-    ['gastoComida', 'gastoBebida', 'chavePix', 'nomePix'].forEach(id => {
-      document.getElementById(id).addEventListener('input', atualizarTudo);
-    });
-
-    atualizarTudo();
-  </script>
-</body>
-</html>
+      <div class="top-actions">
+        <button type="button" class
