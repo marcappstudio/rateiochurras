@@ -4,53 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   
-  <!-- 1. SEO Principal (Google e Buscadores) -->
   <title>Churrascômetro & Pix | Calculadora de Rateio de Churrasco</title>
   <meta name="description" content="Organize seu churrasco sem dor de cabeça. Calcule o rateio justo separando quem só come de quem bebe, controle a lista de presença e gere o QR Code Pix na hora." />
   <meta name="keywords" content="rateio de churrasco, calculadora de churrasco, churrascômetro, dividir conta churrasco, qr code pix churrasco, organizar churrasco" />
   <meta name="author" content="RevLevih" />
   <meta name="robots" content="index, follow" />
 
-  <!-- 2. Open Graph / WhatsApp / Redes Sociais -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="🥩 Churrascômetro & Rateio Pix" />
   <meta property="og:description" content="Calcule o rateio proporcional (Só Comida vs. Comida + Bebida), acompanhe quem já pagou e gere o QR Code Pix instantaneamente." />
   <meta property="og:image" content="icon.png" />
   <meta property="og:locale" content="pt_BR" />
 
-  <!-- 3. Twitter Cards -->
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="🥩 Churrascômetro & Rateio Pix" />
-  <meta name="twitter:description" content="Calculadora prática para dividir as despesas do churrasco e gerar cobrança Pix." />
-  <meta name="twitter:image" content="icon.png" />
-
-  <!-- 4. Configuração de Aplicativo Mobile (PWA / Android / iOS) -->
   <meta name="theme-color" content="#ea580c" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Churrasco Pix" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="icon.png" />
   <link rel="apple-touch-icon" href="icon.png" />
-
-  <!-- 5. Dados Estruturados para o Google (Schema.org JSON-LD) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Churrascômetro & Rateio Pix",
-    "description": "Aplicativo web para calcular o rateio proporcional de comida e bebida em churrascos com geração de QR Code Pix.",
-    "applicationCategory": "FinanceApplication",
-    "operatingSystem": "All",
-    "inLanguage": "pt-BR",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "BRL"
-    }
-  }
-  </script>
 
   <!-- Biblioteca para desenhar o QR Code -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -157,6 +128,7 @@
       font-size: 0.92rem;
       outline: none;
       background: #fff;
+      width: 100%;
     }
 
     input:focus, select:focus {
@@ -175,8 +147,9 @@
       color: #fff;
       border: none;
       border-radius: 8px;
-      padding: 0 14px;
-      font-weight: 600;
+      padding: 0 16px;
+      font-weight: 700;
+      font-size: 1rem;
       cursor: pointer;
     }
 
@@ -202,6 +175,12 @@
       font-size: 0.9rem;
     }
 
+    .item-participante input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
     .item-participante.pago {
       background: #f0fdf4;
       border-color: #bbf7d0;
@@ -210,6 +189,7 @@
     .item-participante select {
       padding: 6px;
       font-size: 0.82rem;
+      width: auto;
     }
 
     .valor-tag {
@@ -224,6 +204,7 @@
       border: none;
       cursor: pointer;
       font-size: 1rem;
+      padding: 4px;
     }
 
     .cards-rateio {
@@ -291,6 +272,10 @@
       padding: 10px;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-copia-cola {
@@ -321,7 +306,6 @@
 <body>
 
   <div class="container">
-    <!-- Bloco 1: Evento e Gastos -->
     <div class="card">
       <div class="header-brand">
         <img src="icon.png" alt="Ícone Churrasco" onerror="this.style.display='none'" />
@@ -359,7 +343,6 @@
       </div>
     </div>
 
-    <!-- Bloco 2: Lista Nominal de Participantes -->
     <div class="card">
       <h2>👥 Lista de Participantes</h2>
       <div class="add-row">
@@ -368,13 +351,12 @@
           <option value="Comida + Bebida">Comida + Bebida</option>
           <option value="Só Comida">Só Comida</option>
         </select>
-        <button class="btn-add" onclick="adicionarParticipante()">➕</button>
+        <button type="button" class="btn-add" id="btnAddParticipante">➕</button>
       </div>
 
       <div id="listaContainer" class="lista-participantes"></div>
     </div>
 
-    <!-- Bloco 3: Resumo, Pix e WhatsApp -->
     <div class="card">
       <h2>📊 Rateio e Recebimento Pix</h2>
 
@@ -385,18 +367,18 @@
         </div>
         <div class="field">
           <label>Chave Pix</label>
-          <input type="text" id="chavePix" placeholder="CPF, Celular ou Email" value="" />
+          <input type="text" id="chavePix" placeholder="Digite CPF, Celular ou Email" value="" />
         </div>
       </div>
 
       <p style="font-size: 0.8rem; color: var(--muted);">Clique na cota para alternar o QR Code:</p>
       <div class="cards-rateio">
-        <div class="card-opcao active" id="btnOptComida" onclick="trocarCategoria('comida')">
+        <div class="card-opcao active" id="btnOptComida">
           <span>🍽️ Só Comida</span>
           <strong id="valSoComida">R$ 0,00</strong>
         </div>
 
-        <div class="card-opcao" id="btnOptBebida" onclick="trocarCategoria('bebida')">
+        <div class="card-opcao" id="btnOptBebida">
           <span>🍻 Comida + Bebida</span>
           <strong id="valComidaBebida">R$ 0,00</strong>
         </div>
@@ -410,10 +392,10 @@
       <div class="qr-box">
         <span id="qrDescricao" style="font-size: 0.85rem; font-weight: 600;">QR Code Pix</span>
         <div id="qrcode"></div>
-        <button class="btn-copia-cola" id="btnCopiarPix">📋 Copiar Pix Copia e Cola</button>
+        <button type="button" class="btn-copia-cola" id="btnCopiarPix">📋 Copiar Pix Copia e Cola</button>
       </div>
 
-      <button class="btn-whats" id="btnEnviarWhats">📲 Compartilhar Lista no WhatsApp</button>
+      <button type="button" class="btn-whats" id="btnEnviarWhats">📲 Compartilhar Lista no WhatsApp</button>
     </div>
   </div>
 
@@ -422,7 +404,11 @@
     let categoriaAtual = 'comida';
     let payloadPixAtual = '';
 
-    document.getElementById('dataEvento').valueAsDate = new Date();
+    // Define a data atual com segurança
+    try {
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById('dataEvento').value = hoje;
+    } catch (e) {}
 
     function emv(id, val) {
       return id + val.length.toString().padStart(2, '0') + val;
@@ -462,7 +448,10 @@
       const inputNome = document.getElementById('novoNome');
       const selectTipo = document.getElementById('novoTipo');
       const nome = inputNome.value.trim();
-      if (!nome) return;
+      if (!nome) {
+        inputNome.focus();
+        return;
+      }
 
       participantes.push({
         nome: nome,
@@ -471,23 +460,24 @@
       });
 
       inputNome.value = '';
+      inputNome.focus();
       atualizarTudo();
     }
 
-    function alterarTipo(index, novoTipo) {
+    window.alterarTipo = function(index, novoTipo) {
       participantes[index].tipo = novoTipo;
       atualizarTudo();
-    }
+    };
 
-    function alternarPago(index) {
+    window.alternarPago = function(index) {
       participantes[index].pago = !participantes[index].pago;
       atualizarTudo();
-    }
+    };
 
-    function removerParticipante(index) {
+    window.removerParticipante = function(index) {
       participantes.splice(index, 1);
       atualizarTudo();
-    }
+    };
 
     function atualizarTudo() {
       const comida = parseFloat(document.getElementById('gastoComida').value) || 0;
@@ -498,4 +488,155 @@
       const totalComem = qtdSoComida + qtdComidaBebida;
       const totalBebem = qtdComidaBebida;
 
-      const
+      const cotaComida = totalComem > 0 ? (comida / totalComem) : 0;
+      const cotaBebida = totalBebem > 0 ? (bebida / totalBebem) : 0;
+
+      const vComida = cotaComida;
+      const vComidaBebida = cotaComida + cotaBebida;
+
+      document.getElementById('valSoComida').innerText = `R$ ${vComida.toFixed(2).replace('.', ',')}`;
+      document.getElementById('valComidaBebida').innerText = `R$ ${vComidaBebida.toFixed(2).replace('.', ',')}`;
+
+      const container = document.getElementById('listaContainer');
+      container.innerHTML = '';
+
+      if (participantes.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:#64748b; text-align:center; padding:8px;">Nenhum participante adicionado ainda. Digite um nome acima e clique em ➕.</p>';
+      } else {
+        participantes.forEach((p, idx) => {
+          const valorPessoa = p.tipo === 'Só Comida' ? vComida : vComidaBebida;
+          const div = document.createElement('div');
+          div.className = `item-participante ${p.pago ? 'pago' : ''}`;
+          div.innerHTML = `
+            <input type="checkbox" ${p.pago ? 'checked' : ''} onchange="window.alternarPago(${idx})" title="Marcar pago" />
+            <strong>${p.nome}</strong>
+            <select onchange="window.alterarTipo(${idx}, this.value)">
+              <option value="Comida + Bebida" ${p.tipo === 'Comida + Bebida' ? 'selected' : ''}>Comida + Bebida</option>
+              <option value="Só Comida" ${p.tipo === 'Só Comida' ? 'selected' : ''}>Só Comida</option>
+            </select>
+            <span class="valor-tag" style="color: ${p.pago ? '#16a34a' : '#0f172a'}">
+              ${p.pago ? '✅ Pago' : 'R$ ' + valorPessoa.toFixed(2).replace('.', ',')}
+            </span>
+            <button type="button" class="btn-del" onclick="window.removerParticipante(${idx})">❌</button>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      let arrecadado = 0;
+      participantes.forEach(p => {
+        if (p.pago) {
+          arrecadado += (p.tipo === 'Só Comida' ? vComida : vComidaBebida);
+        }
+      });
+      const totalGasto = comida + bebida;
+      const faltam = Math.max(0, totalGasto - arrecadado);
+
+      document.getElementById('txtArrecadado').innerText = `Arrecadado: R$ ${arrecadado.toFixed(2).replace('.', ',')}`;
+      document.getElementById('txtFaltam').innerText = faltam > 0 ? `Faltam: R$ ${faltam.toFixed(2).replace('.', ',')}` : 'Quitado! 🎉';
+
+      renderizarPix(vComida, vComidaBebida);
+    }
+
+    function renderizarPix(vComida, vComidaBebida) {
+      const chave = document.getElementById('chavePix').value;
+      const nome = document.getElementById('nomePix').value || 'ORGANIZADOR';
+      const valor = categoriaAtual === 'comida' ? vComida : vComidaBebida;
+
+      document.getElementById('qrDescricao').innerText = `QR Code: ${categoriaAtual === 'comida' ? 'Só Comida' : 'Comida + Bebida'} (R$ ${valor.toFixed(2).replace('.', ',')})`;
+
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+
+      if (!chave.trim()) {
+        qrContainer.innerHTML = '<span style="font-size:0.8rem; color:#ea580c; font-weight:600;">👆 Digite uma Chave Pix no campo acima para exibir o QR Code</span>';
+        payloadPixAtual = '';
+        return;
+      }
+
+      payloadPixAtual = gerarBRCode(chave, nome, valor);
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrContainer, {
+          text: payloadPixAtual,
+          width: 150,
+          height: 150
+        });
+      } else {
+        qrContainer.innerHTML = '<span style="font-size:0.78rem; color:#64748b;">Código Pix pronto para copiar abaixo:</span>';
+      }
+    }
+
+    // Eventos dos botões
+    document.getElementById('btnAddParticipante').addEventListener('click', adicionarParticipante);
+
+    document.getElementById('novoNome').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        adicionarParticipante();
+      }
+    });
+
+    document.getElementById('btnOptComida').addEventListener('click', () => {
+      categoriaAtual = 'comida';
+      document.getElementById('btnOptComida').classList.add('active');
+      document.getElementById('btnOptBebida').classList.remove('active');
+      atualizarTudo();
+    });
+
+    document.getElementById('btnOptBebida').addEventListener('click', () => {
+      categoriaAtual = 'bebida';
+      document.getElementById('btnOptBebida').classList.add('active');
+      document.getElementById('btnOptComida').classList.remove('active');
+      atualizarTudo();
+    });
+
+    document.getElementById('btnCopiarPix').addEventListener('click', () => {
+      if (!payloadPixAtual) return alert('Digite uma chave Pix primeiro no campo "Chave Pix".');
+      navigator.clipboard.writeText(payloadPixAtual).then(() => {
+        alert('Código Pix Copia e Cola copiado!');
+      });
+    });
+
+    document.getElementById('btnEnviarWhats').addEventListener('click', () => {
+      const titulo = document.getElementById('titulo').value || 'Churrasco';
+      const rawData = document.getElementById('dataEvento').value;
+      const hora = document.getElementById('horaEvento').value;
+      const chave = document.getElementById('chavePix').value;
+      const vComida = document.getElementById('valSoComida').innerText;
+      const vBebida = document.getElementById('valComidaBebida').innerText;
+
+      let dataFmt = 'A definir';
+      if (rawData) {
+        const [ano, mes, dia] = rawData.split('-');
+        dataFmt = `${dia}/${mes}/${ano} às ${hora}`;
+      }
+
+      const listaStr = participantes.length > 0
+        ? participantes.map(p => `- ${p.nome} (${p.tipo}): ${p.pago ? '[PAGO ✅]' : '[PENDENTE]'}`).join('\n')
+        : 'Nenhum participante na lista ainda.';
+
+      const msg = 
+`🥩 *${titulo}*
+📅 *Data:* ${dataFmt}
+
+📊 *Valores do Rateio:*
+🍽️ *Só Comida:* ${vComida}
+🍻 *Comida + Bebida:* ${vBebida}
+
+👥 *Participantes:*
+${listaStr}
+${chave ? `\n💳 *Chave Pix:* ${chave}` : ''}
+
+Favor enviar o comprovante para darmos baixa! 🔥`;
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    });
+
+    ['gastoComida', 'gastoBebida', 'chavePix', 'nomePix'].forEach(id => {
+      document.getElementById(id).addEventListener('input', atualizarTudo);
+    });
+
+    atualizarTudo();
+  </script>
+</body>
+</html>
