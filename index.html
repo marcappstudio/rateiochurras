@@ -580,4 +580,673 @@
       <p class="subtitle">Seus dados e participantes ficam salvos automaticamente no aparelho.</p>
 
       <div class="top-actions">
-        <button type="button" class
+        <button type="button" class="btn-acao-topo salvar" id="btnSalvarHistorico">💾 Salvar no Histórico</button>
+        <button type="button" class="btn-acao-topo" id="btnNovoChurrasco">✨ Novo Churrasco</button>
+      </div>
+
+      <div class="grid">
+        <div class="field full-width">
+          <label>Nome do Evento</label>
+          <input type="text" id="titulo" value="Churrasco da Galera" />
+        </div>
+
+        <div class="field">
+          <label>Data (DD/MM/AAAA)</label>
+          <input type="date" id="dataEvento" />
+        </div>
+
+        <div class="field">
+          <label>Horário</label>
+          <input type="time" id="horaEvento" />
+        </div>
+
+        <div id="avisoDataHora" class="aviso-data">
+          ⚠️ Não é permitido agendar em data ou horário que já passou. Ajustamos para o horário atual!
+        </div>
+
+        <div class="field">
+          <label>Total Comida (R$)</label>
+          <input type="number" id="gastoComida" min="0" step="10" value="300" />
+        </div>
+
+        <div class="field">
+          <label>Total Bebida (R$)</label>
+          <input type="number" id="gastoBebida" min="0" step="10" value="180" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco 2: Lista de Participantes -->
+    <div class="card">
+      <h2>👥 Lista de Participantes</h2>
+      <div class="add-row">
+        <input type="text" id="novoNome" placeholder="Nome do convidado" />
+        <select id="novoTipo">
+          <option value="Comida + Bebida">Comida + Bebida</option>
+          <option value="Só Comida">Só Comida</option>
+        </select>
+        <button type="button" class="btn-add" id="btnAddParticipante">➕</button>
+      </div>
+
+      <div id="listaContainer" class="lista-participantes"></div>
+    </div>
+
+    <!-- Bloco 3: Rateio e Pix -->
+    <div class="card">
+      <h2>📊 Rateio e Recebimento Pix</h2>
+
+      <div class="grid" style="margin-bottom: 12px;">
+        <div class="field">
+          <label>Recebedor (Nome)</label>
+          <input type="text" id="nomePix" value="ORGANIZADOR" maxlength="25" />
+        </div>
+        <div class="field">
+          <label>Chave Pix</label>
+          <input type="text" id="chavePix" placeholder="Digite CPF, Celular ou Email" value="" />
+        </div>
+      </div>
+
+      <p style="font-size: 0.8rem; color: var(--muted);">Toque em uma das cotas abaixo para gerar o QR Code dela:</p>
+      <div class="cards-rateio">
+        <div class="card-opcao active" id="btnOptComida">
+          <span>🍽️ Só Comida</span>
+          <strong id="valSoComida">R$ 0,00</strong>
+        </div>
+
+        <div class="card-opcao" id="btnOptBebida">
+          <span>🍻 Comida + Bebida</span>
+          <strong id="valComidaBebida">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <div class="balanco-bar">
+        <span id="txtArrecadado">Arrecadado: R$ 0,00</span>
+        <span id="txtFaltam" style="color: var(--primary);">Faltam: R$ 0,00</span>
+      </div>
+
+      <div class="qr-box">
+        <span id="qrDescricao" style="font-size: 0.85rem; font-weight: 600;">QR Code Pix</span>
+        <div id="qrcode"></div>
+        <button type="button" class="btn-copia-cola" id="btnCopiarPix">📋 Copiar Pix Copia e Cola</button>
+      </div>
+
+      <button type="button" class="btn-whats" id="btnEnviarWhats">📲 Compartilhar Lista no WhatsApp</button>
+    </div>
+
+    <!-- Bloco 4: Histórico de Churrascos Anteriores -->
+    <div class="card">
+      <h2>📚 Histórico de Churrascos</h2>
+      <div id="historicoContainer" class="lista-historico"></div>
+    </div>
+
+    <!-- Bloco 5: Seção de Ajuda e Dúvidas Frequentes -->
+    <div class="card">
+      <h2>💡 Dúvidas Rápidas (Ajuda)</h2>
+
+      <details class="faq-item">
+        <summary>Como funciona o cálculo proporcional?</summary>
+        <p>O valor gasto em <strong>Comida</strong> é dividido igualmente entre todos os presentes. Já o valor gasto em <strong>Bebida</strong> é dividido apenas entre aqueles marcados como "Comida + Bebida". Assim, quem não bebe paga apenas a sua parte da comida.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Como mudar alguém de "Só Comida" para "Comida + Bebida"?</summary>
+        <p>Não precisa excluir a pessoa! Na própria linha do participante, toque na caixinha ao lado do nome dele e mude a opção. O aplicativo recalcula o valor de todo mundo na mesma hora.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Como gerar o QR Code Pix para cada grupo?</summary>
+        <p>Digite sua chave Pix no campo indicado. Depois, basta tocar no cartão <strong>"🍽️ Só Comida"</strong> ou no cartão <strong>"🍻 Comida + Bebida"</strong> para o QR Code e o botão Copia e Cola mudarem imediatamente para o valor escolhido.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Meus dados somem se eu fechar o aplicativo?</summary>
+        <p>Não! Tudo fica salvo automaticamente na memória do seu celular. Além disso, você pode clicar em <strong>"💾 Salvar no Histórico"</strong> lá no topo para arquivar vários churrascos diferentes e consultá-los quando quiser.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- Janela Modal Passo a Passo ("Como Usar") -->
+  <div class="modal-overlay" id="modalAjuda">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🥩 Como usar o Churrascômetro</h3>
+        <button type="button" class="btn-fechar-modal" id="btnFecharAjuda">✕</button>
+      </div>
+
+      <div class="passo-ajuda">
+        <div class="passo-numero">1</div>
+        <div class="passo-texto">
+          <strong>Defina a Data e os Gastos</strong>
+          <span>Escolha o nome, a data (sempre de hoje em diante) e digite quanto foi gasto no total com Comida e com Bebida.</span>
+        </div>
+      </div>
+
+      <div class="passo-ajuda">
+        <div class="passo-numero">2</div>
+        <div class="passo-texto">
+          <strong>Adicione a Galera</strong>
+          <span>Digite o nome de cada convidado, escolha se ele vai consumir "Comida + Bebida" ou "Só Comida" e toque no botão ➕.</span>
+        </div>
+      </div>
+
+      <div class="passo-ajuda">
+        <div class="passo-numero">3</div>
+        <div class="passo-texto">
+          <strong>Controle quem já pagou</strong>
+          <span>Conforme o pessoal for pagando, marque a caixinha ✅ ao lado do nome. O app soma o total arrecadado e mostra quanto ainda falta.</span>
+        </div>
+      </div>
+
+      <div class="passo-ajuda">
+        <div class="passo-numero">4</div>
+        <div class="passo-texto">
+          <strong>Cobre com QR Code Pix ou WhatsApp</strong>
+          <span>Preencha sua Chave Pix para exibir o QR Code na tela ou toque no botão verde para enviar o resumo completo no grupo do WhatsApp!</span>
+        </div>
+      </div>
+
+      <div class="passo-ajuda">
+        <div class="passo-numero">5</div>
+        <div class="passo-texto">
+          <strong>Guarde no Histórico</strong>
+          <span>Use o botão "💾 Salvar no Histórico" no topo da tela para guardar o churrasco na sua lista de eventos realizados.</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-whats" style="background: var(--primary); margin-top: 6px;" id="btnEntendiAjuda">👍 Entendi, vamos lá!</button>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_ATUAL = 'churrasco_app_estado_atual_v2';
+    const STORAGE_HISTORICO = 'churrasco_app_historico_v2';
+
+    let idEventoAtual = null;
+    let participantes = [];
+    let historicoChurrascos = [];
+    let categoriaAtual = 'comida';
+    let payloadPixAtual = '';
+    let modoHistorico = false;
+
+    function obterDataHojeStr() {
+      const agora = new Date();
+      const ano = agora.getFullYear();
+      const mes = String(agora.getMonth() + 1).padStart(2, '0');
+      const dia = String(agora.getDate()).padStart(2, '0');
+      return `${ano}-${mes}-${dia}`;
+    }
+
+    function obterHoraAtualStr() {
+      const agora = new Date();
+      const horas = String(agora.getHours()).padStart(2, '0');
+      const minutos = String(agora.getMinutes()).padStart(2, '0');
+      return `${horas}:${minutos}`;
+    }
+
+    function formatarDataBR(dataISO) {
+      if (!dataISO) return '';
+      const partes = dataISO.split('-');
+      return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : dataISO;
+    }
+
+    function validarDataHora(exibirAlerta = true) {
+      const inputData = document.getElementById('dataEvento');
+      const inputHora = document.getElementById('horaEvento');
+      const aviso = document.getElementById('avisoDataHora');
+
+      const hojeStr = obterDataHojeStr();
+      const horaAgoraStr = obterHoraAtualStr();
+
+      if (!modoHistorico) {
+        inputData.min = hojeStr;
+      } else {
+        inputData.removeAttribute('min');
+      }
+
+      if (modoHistorico) {
+        aviso.style.display = 'none';
+        return true;
+      }
+
+      let corrigiu = false;
+
+      if (!inputData.value || inputData.value < hojeStr) {
+        inputData.value = hojeStr;
+        corrigiu = true;
+      }
+
+      if (inputData.value === hojeStr) {
+        inputHora.min = horaAgoraStr;
+        if (!inputHora.value || inputHora.value < horaAgoraStr) {
+          inputHora.value = horaAgoraStr;
+          corrigiu = true;
+        }
+      } else {
+        inputHora.removeAttribute('min');
+      }
+
+      if (corrigiu && exibirAlerta) {
+        aviso.style.display = 'block';
+        setTimeout(() => { aviso.style.display = 'none'; }, 4500);
+      }
+
+      return !corrigiu;
+    }
+
+    function salvarEstadoLocal() {
+      const estado = {
+        id: idEventoAtual,
+        titulo: document.getElementById('titulo').value,
+        data: document.getElementById('dataEvento').value,
+        hora: document.getElementById('horaEvento').value,
+        gastoComida: document.getElementById('gastoComida').value,
+        gastoBebida: document.getElementById('gastoBebida').value,
+        nomePix: document.getElementById('nomePix').value,
+        chavePix: document.getElementById('chavePix').value,
+        participantes: participantes,
+        modoHistorico: modoHistorico
+      };
+      try {
+        localStorage.setItem(STORAGE_ATUAL, JSON.stringify(estado));
+      } catch (e) {}
+    }
+
+    function carregarEstadoLocal() {
+      try {
+        const histRaw = localStorage.getItem(STORAGE_HISTORICO);
+        if (histRaw) {
+          historicoChurrascos = JSON.parse(histRaw);
+        }
+
+        const salvoRaw = localStorage.getItem(STORAGE_ATUAL);
+        if (salvoRaw) {
+          const d = JSON.parse(salvoRaw);
+          idEventoAtual = d.id || Date.now();
+          document.getElementById('titulo').value = d.titulo ?? 'Churrasco da Galera';
+          document.getElementById('dataEvento').value = d.data || obterDataHojeStr();
+          document.getElementById('horaEvento').value = d.hora || obterHoraAtualStr();
+          document.getElementById('gastoComida').value = d.gastoComida ?? 300;
+          document.getElementById('gastoBebida').value = d.gastoBebida ?? 180;
+          document.getElementById('nomePix').value = d.nomePix ?? 'ORGANIZADOR';
+          document.getElementById('chavePix').value = d.chavePix ?? '';
+          participantes = Array.isArray(d.participantes) ? d.participantes : [];
+          modoHistorico = Boolean(d.modoHistorico);
+          validarDataHora(false);
+          return;
+        }
+      } catch (e) {}
+
+      idEventoAtual = Date.now();
+      document.getElementById('dataEvento').value = obterDataHojeStr();
+      document.getElementById('horaEvento').value = obterHoraAtualStr();
+      validarDataHora(false);
+    }
+
+    function salvarNoHistorico() {
+      const comida = parseFloat(document.getElementById('gastoComida').value) || 0;
+      const bebida = parseFloat(document.getElementById('gastoBebida').value) || 0;
+      const titulo = document.getElementById('titulo').value.trim() || 'Churrasco';
+      const data = document.getElementById('dataEvento').value;
+      const hora = document.getElementById('horaEvento').value;
+
+      if (!idEventoAtual) idEventoAtual = Date.now();
+
+      const registro = {
+        id: idEventoAtual,
+        titulo: titulo,
+        data: data,
+        hora: hora,
+        gastoComida: comida,
+        gastoBebida: bebida,
+        nomePix: document.getElementById('nomePix').value,
+        chavePix: document.getElementById('chavePix').value,
+        participantes: JSON.parse(JSON.stringify(participantes)),
+        salvoEm: new Date().toLocaleString('pt-BR')
+      };
+
+      const idxExistente = historicoChurrascos.findIndex(item => item.id === idEventoAtual);
+      if (idxExistente >= 0) {
+        historicoChurrascos[idxExistente] = registro;
+      } else {
+        historicoChurrascos.unshift(registro);
+      }
+
+      localStorage.setItem(STORAGE_HISTORICO, JSON.stringify(historicoChurrascos));
+      renderizarHistorico();
+      alert(`"${titulo}" foi salvo no Histórico de Churrascos!`);
+    }
+
+    function iniciarNovoChurrasco() {
+      if (participantes.length > 0) {
+        const confirmar = confirm('Deseja iniciar um novo churrasco em branco? (Dica: clique em "Salvar no Histórico" antes se quiser guardar o atual).');
+        if (!confirmar) return;
+      }
+
+      modoHistorico = false;
+      idEventoAtual = Date.now();
+      document.getElementById('titulo').value = 'Churrasco da Galera';
+      document.getElementById('dataEvento').value = obterDataHojeStr();
+      document.getElementById('horaEvento').value = obterHoraAtualStr();
+      document.getElementById('gastoComida').value = '300';
+      document.getElementById('gastoBebida').value = '180';
+      participantes = [];
+
+      validarDataHora(false);
+      atualizarTudo();
+    }
+
+    window.carregarDoHistorico = function(id) {
+      const encontrado = historicoChurrascos.find(item => item.id === id);
+      if (!encontrado) return;
+
+      modoHistorico = true;
+      idEventoAtual = encontrado.id;
+      document.getElementById('titulo').value = encontrado.titulo;
+      document.getElementById('dataEvento').value = encontrado.data;
+      document.getElementById('horaEvento').value = encontrado.hora;
+      document.getElementById('gastoComida').value = encontrado.gastoComida;
+      document.getElementById('gastoBebida').value = encontrado.gastoBebida;
+      if (encontrado.nomePix) document.getElementById('nomePix').value = encontrado.nomePix;
+      if (encontrado.chavePix) document.getElementById('chavePix').value = encontrado.chavePix;
+      participantes = JSON.parse(JSON.stringify(encontrado.participantes || []));
+
+      validarDataHora(false);
+      atualizarTudo();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.excluirDoHistorico = function(id) {
+      if (!confirm('Tem certeza que deseja excluir este churrasco do histórico?')) return;
+      historicoChurrascos = historicoChurrascos.filter(item => item.id !== id);
+      localStorage.setItem(STORAGE_HISTORICO, JSON.stringify(historicoChurrascos));
+      renderizarHistorico();
+    };
+
+    function renderizarHistorico() {
+      const container = document.getElementById('historicoContainer');
+      container.innerHTML = '';
+
+      if (historicoChurrascos.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:#64748b; text-align:center; padding:8px;">Nenhum churrasco salvo no histórico ainda. Clique em "💾 Salvar no Histórico" lá no topo para guardar seus eventos.</p>';
+        return;
+      }
+
+      historicoChurrascos.forEach(item => {
+        const total = (parseFloat(item.gastoComida) || 0) + (parseFloat(item.gastoBebida) || 0);
+        const qtdPessoas = Array.isArray(item.participantes) ? item.participantes.length : 0;
+        const qtdPagos = Array.isArray(item.participantes) ? item.participantes.filter(p => p.pago).length : 0;
+
+        const div = document.createElement('div');
+        div.className = 'item-historico';
+        div.innerHTML = `
+          <div class="info-historico">
+            <strong>🥩 ${item.titulo}</strong>
+            <span>📅 ${formatarDataBR(item.data)} às ${item.hora || '--:--'} • 💰 R$ ${total.toFixed(2).replace('.', ',')} • 👥 ${qtdPagos}/${qtdPessoas} pagos</span>
+          </div>
+          <div class="acoes-historico">
+            <button type="button" class="btn-hist-abrir" onclick="window.carregarDoHistorico(${item.id})">📂 Abrir</button>
+            <button type="button" class="btn-hist-del" onclick="window.excluirDoHistorico(${item.id})">🗑️</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function emv(id, val) {
+      return id + val.length.toString().padStart(2, '0') + val;
+    }
+
+    function crc16(str) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) {
+          crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
+        }
+      }
+      return crc.toString(16).toUpperCase().padStart(4, '0');
+    }
+
+    function gerarBRCode(chave, nome, valor) {
+      chave = chave.trim();
+      nome = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().substring(0, 25).toUpperCase();
+      const valStr = valor > 0 ? valor.toFixed(2) : '';
+      const merchant = emv('00', 'BR.GOV.BCB.PIX') + emv('01', chave);
+      let payload = 
+        emv('00', '01') +
+        emv('26', merchant) +
+        emv('52', '0000') +
+        emv('53', '986') +
+        (valStr ? emv('54', valStr) : '') +
+        emv('58', 'BR') +
+        emv('59', nome || 'RECEBEDOR') +
+        emv('60', 'BRASIL') +
+        emv('62', emv('05', '***')) +
+        '6304';
+      return payload + crc16(payload);
+    }
+
+    function adicionarParticipante() {
+      const inputNome = document.getElementById('novoNome');
+      const selectTipo = document.getElementById('novoTipo');
+      const nome = inputNome.value.trim();
+      if (!nome) {
+        inputNome.focus();
+        return;
+      }
+
+      participantes.push({
+        nome: nome,
+        tipo: selectTipo.value,
+        pago: false
+      });
+
+      inputNome.value = '';
+      inputNome.focus();
+      atualizarTudo();
+    }
+
+    window.alterarTipo = function(index, novoTipo) {
+      participantes[index].tipo = novoTipo;
+      atualizarTudo();
+    };
+
+    window.alternarPago = function(index) {
+      participantes[index].pago = !participantes[index].pago;
+      atualizarTudo();
+    };
+
+    window.removerParticipante = function(index) {
+      participantes.splice(index, 1);
+      atualizarTudo();
+    };
+
+    function atualizarTudo() {
+      const comida = parseFloat(document.getElementById('gastoComida').value) || 0;
+      const bebida = parseFloat(document.getElementById('gastoBebida').value) || 0;
+
+      const qtdSoComida = participantes.filter(p => p.tipo === 'Só Comida').length;
+      const qtdComidaBebida = participantes.filter(p => p.tipo === 'Comida + Bebida').length;
+      const totalComem = qtdSoComida + qtdComidaBebida;
+      const totalBebem = qtdComidaBebida;
+
+      const cotaComida = totalComem > 0 ? (comida / totalComem) : 0;
+      const cotaBebida = totalBebem > 0 ? (bebida / totalBebem) : 0;
+
+      const vComida = cotaComida;
+      const vComidaBebida = cotaComida + cotaBebida;
+
+      document.getElementById('valSoComida').innerText = `R$ ${vComida.toFixed(2).replace('.', ',')}`;
+      document.getElementById('valComidaBebida').innerText = `R$ ${vComidaBebida.toFixed(2).replace('.', ',')}`;
+
+      const container = document.getElementById('listaContainer');
+      container.innerHTML = '';
+
+      if (participantes.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:#64748b; text-align:center; padding:8px;">Nenhum participante adicionado ainda. Digite um nome acima e toque em ➕.</p>';
+      } else {
+        participantes.forEach((p, idx) => {
+          const valorPessoa = p.tipo === 'Só Comida' ? vComida : vComidaBebida;
+          const div = document.createElement('div');
+          div.className = `item-participante ${p.pago ? 'pago' : ''}`;
+          div.innerHTML = `
+            <input type="checkbox" ${p.pago ? 'checked' : ''} onchange="window.alternarPago(${idx})" title="Marcar pago" />
+            <strong>${p.nome}</strong>
+            <select onchange="window.alterarTipo(${idx}, this.value)">
+              <option value="Comida + Bebida" ${p.tipo === 'Comida + Bebida' ? 'selected' : ''}>Comida + Bebida</option>
+              <option value="Só Comida" ${p.tipo === 'Só Comida' ? 'selected' : ''}>Só Comida</option>
+            </select>
+            <span class="valor-tag" style="color: ${p.pago ? '#16a34a' : '#0f172a'}">
+              ${p.pago ? '✅ Pago' : 'R$ ' + valorPessoa.toFixed(2).replace('.', ',')}
+            </span>
+            <button type="button" class="btn-del" onclick="window.removerParticipante(${idx})">❌</button>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      let arrecadado = 0;
+      participantes.forEach(p => {
+        if (p.pago) {
+          arrecadado += (p.tipo === 'Só Comida' ? vComida : vComidaBebida);
+        }
+      });
+      const totalGasto = comida + bebida;
+      const faltam = Math.max(0, totalGasto - arrecadado);
+
+      document.getElementById('txtArrecadado').innerText = `Arrecadado: R$ ${arrecadado.toFixed(2).replace('.', ',')}`;
+      document.getElementById('txtFaltam').innerText = faltam > 0 ? `Faltam: R$ ${faltam.toFixed(2).replace('.', ',')}` : 'Quitado! 🎉';
+
+      renderizarPix(vComida, vComidaBebida);
+      salvarEstadoLocal();
+      renderizarHistorico();
+    }
+
+    function renderizarPix(vComida, vComidaBebida) {
+      const chave = document.getElementById('chavePix').value;
+      const nome = document.getElementById('nomePix').value || 'ORGANIZADOR';
+      const valor = categoriaAtual === 'comida' ? vComida : vComidaBebida;
+
+      document.getElementById('qrDescricao').innerText = `QR Code: ${categoriaAtual === 'comida' ? 'Só Comida' : 'Comida + Bebida'} (R$ ${valor.toFixed(2).replace('.', ',')})`;
+
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+
+      if (!chave.trim()) {
+        qrContainer.innerHTML = '<span style="font-size:0.8rem; color:#ea580c; font-weight:600;">👆 Digite uma Chave Pix no campo acima para exibir o QR Code</span>';
+        payloadPixAtual = '';
+        return;
+      }
+
+      payloadPixAtual = gerarBRCode(chave, nome, valor);
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrContainer, {
+          text: payloadPixAtual,
+          width: 150,
+          height: 150
+        });
+      } else {
+        qrContainer.innerHTML = '<span style="font-size:0.78rem; color:#64748b;">Código Pix pronto para copiar abaixo:</span>';
+      }
+    }
+
+    // Controle do Modal de Ajuda
+    const modalAjuda = document.getElementById('modalAjuda');
+    document.getElementById('btnAbrirAjuda').addEventListener('click', () => {
+      modalAjuda.classList.add('aberto');
+    });
+    document.getElementById('btnFecharAjuda').addEventListener('click', () => {
+      modalAjuda.classList.remove('aberto');
+    });
+    document.getElementById('btnEntendiAjuda').addEventListener('click', () => {
+      modalAjuda.classList.remove('aberto');
+    });
+    modalAjuda.addEventListener('click', (e) => {
+      if (e.target === modalAjuda) modalAjuda.classList.remove('aberto');
+    });
+
+    // Eventos Principais
+    document.getElementById('btnAddParticipante').addEventListener('click', adicionarParticipante);
+    document.getElementById('btnSalvarHistorico').addEventListener('click', salvarNoHistorico);
+    document.getElementById('btnNovoChurrasco').addEventListener('click', iniciarNovoChurrasco);
+
+    document.getElementById('novoNome').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        adicionarParticipante();
+      }
+    });
+
+    document.getElementById('dataEvento').addEventListener('change', () => {
+      modoHistorico = false;
+      validarDataHora(true);
+      atualizarTudo();
+    });
+
+    document.getElementById('horaEvento').addEventListener('change', () => {
+      modoHistorico = false;
+      validarDataHora(true);
+      atualizarTudo();
+    });
+
+    document.getElementById('btnOptComida').addEventListener('click', () => {
+      categoriaAtual = 'comida';
+      document.getElementById('btnOptComida').classList.add('active');
+      document.getElementById('btnOptBebida').classList.remove('active');
+      atualizarTudo();
+    });
+
+    document.getElementById('btnOptBebida').addEventListener('click', () => {
+      categoriaAtual = 'bebida';
+      document.getElementById('btnOptBebida').classList.add('active');
+      document.getElementById('btnOptComida').classList.remove('active');
+      atualizarTudo();
+    });
+
+    document.getElementById('btnCopiarPix').addEventListener('click', () => {
+      if (!payloadPixAtual) return alert('Digite uma chave Pix primeiro no campo "Chave Pix".');
+      navigator.clipboard.writeText(payloadPixAtual).then(() => {
+        alert('Código Pix Copia e Cola copiado!');
+      });
+    });
+
+    document.getElementById('btnEnviarWhats').addEventListener('click', () => {
+      const titulo = document.getElementById('titulo').value || 'Churrasco';
+      const rawData = document.getElementById('dataEvento').value;
+      const hora = document.getElementById('horaEvento').value;
+      const chave = document.getElementById('chavePix').value;
+      const vComida = document.getElementById('valSoComida').innerText;
+      const vBebida = document.getElementById('valComidaBebida').innerText;
+
+      const dataFmt = rawData ? `${formatarDataBR(rawData)} às ${hora}` : 'A definir';
+
+      const listaStr = participantes.length > 0
+        ? participantes.map(p => `- ${p.nome} (${p.tipo}): ${p.pago ? '[PAGO ✅]' : '[PENDENTE]'}`).join('\n')
+        : 'Nenhum participante na lista ainda.';
+
+      const msg = 
+`🥩 *${titulo}*
+📅 *Data:* ${dataFmt}
+
+📊 *Valores do Rateio:*
+🍽️ *Só Comida:* ${vComida}
+🍻 *Comida + Bebida:* ${vBebida}
+
+👥 *Participantes:*
+${listaStr}
+${chave ? `\n💳 *Chave Pix:* ${chave}` : ''}
+
+Favor enviar o comprovante para darmos baixa! 🔥`;
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    });
+
+    ['titulo', 'gastoComida', 'gastoBebida', 'chavePix', 'nomePix'].forEach(id => {
+      document.getElementById(id).addEventListener('input', atualizarTudo);
+    });
+
+    carregarEstadoLocal();
+    atualizarTudo();
+  </script>
+</body>
+</html>
