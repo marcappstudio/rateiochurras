@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  
+  <!-- 1. SEO Principal (Google e Buscadores) -->
+  <title>Churrascômetro & Pix | Calculadora de Rateio de Churrasco</title>
+  <meta name="description" content="Organize seu churrasco sem dor de cabeça. Calcule o rateio justo separando quem só come de quem bebe, controle a lista de presença e gere o QR Code Pix na hora." />
+  <meta name="keywords" content="rateio de churrasco, calculadora de churrasco, churrascômetro, dividir conta churrasco, qr code pix churrasco, organizar churrasco" />
+  <meta name="author" content="RevLevih" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- 2. Open Graph / WhatsApp / Redes Sociais -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="🥩 Churrascômetro & Rateio Pix" />
+  <meta property="og:description" content="Calcule o rateio proporcional (Só Comida vs. Comida + Bebida), acompanhe quem já pagou e gere o QR Code Pix instantaneamente." />
+  <meta property="og:image" content="icon.png" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <!-- 3. Twitter Cards -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="🥩 Churrascômetro & Rateio Pix" />
+  <meta name="twitter:description" content="Calculadora prática para dividir as despesas do churrasco e gerar cobrança Pix." />
+  <meta name="twitter:image" content="icon.png" />
+
+  <!-- 4. Configuração de Aplicativo Mobile (PWA / Android / iOS) -->
+  <meta name="theme-color" content="#ea580c" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Churrasco Pix" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+
+  <!-- 5. Dados Estruturados para o Google (Schema.org JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Churrascômetro & Rateio Pix",
+    "description": "Aplicativo web para calcular o rateio proporcional de comida e bebida em churrascos com geração de QR Code Pix.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "inLanguage": "pt-BR",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL"
+    }
+  }
+  </script>
+
+  <!-- Biblioteca para desenhar o QR Code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #ea580c;
+      --primary-hover: #c2410c;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 20px 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header-brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      color: var(--primary);
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    p.subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input, select {
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      outline: none;
+      background: #fff;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+    }
+
+    .add-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1.2fr auto;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .btn-add {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-add:hover {
+      background: var(--primary-hover);
+    }
+
+    .lista-participantes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-participante {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto auto;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fafafa;
+      font-size: 0.9rem;
+    }
+
+    .item-participante.pago {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
+    .item-participante select {
+      padding: 6px;
+      font-size: 0.82rem;
+    }
+
+    .valor-tag {
+      font-weight: 700;
+      font-size: 0.85rem;
+      min-width: 75px;
+      text-align: right;
+    }
+
+    .btn-del {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .cards-rateio {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .card-opcao {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #fafafa;
+    }
+
+    .card-opcao.active {
+      border-color: var(--primary);
+      background: #fff7ed;
+    }
+
+    .card-opcao span {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .card-opcao strong {
+      font-size: 1.25rem;
+      color: var(--text);
+    }
+
+    .balanco-bar {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .qr-box {
+      margin-top: 16px;
+      background: #fafafa;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+    }
+
+    #qrcode {
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .btn-copia-cola {
+      background: #1e293b;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-whats {
+      margin-top: 14px;
+      width: 100%;
+      background: #25d366;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Bloco 1: Evento e Gastos -->
+    <div class="card">
+      <div class="header-brand">
+        <img src="icon.png" alt="Ícone Churrasco" onerror="this.style.display='none'" />
+        <div>
+          <h1>Churrascômetro & Pix</h1>
+        </div>
+      </div>
+      <p class="subtitle">Organize os participantes, edite o consumo e gere o Pix.</p>
+
+      <div class="grid">
+        <div class="field full-width">
+          <label>Nome do Evento</label>
+          <input type="text" id="titulo" value="Churrasco da Galera" />
+        </div>
+
+        <div class="field">
+          <label>Data (DD/MM/AAAA)</label>
+          <input type="date" id="dataEvento" />
+        </div>
+
+        <div class="field">
+          <label>Horário</label>
+          <input type="time" id="horaEvento" value="12:00" />
+        </div>
+
+        <div class="field">
+          <label>Total Comida (R$)</label>
+          <input type="number" id="gastoComida" min="0" step="10" value="300" />
+        </div>
+
+        <div class="field">
+          <label>Total Bebida (R$)</label>
+          <input type="number" id="gastoBebida" min="0" step="10" value="180" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco 2: Lista Nominal de Participantes -->
+    <div class="card">
+      <h2>👥 Lista de Participantes</h2>
+      <div class="add-row">
+        <input type="text" id="novoNome" placeholder="Nome do convidado" />
+        <select id="novoTipo">
+          <option value="Comida + Bebida">Comida + Bebida</option>
+          <option value="Só Comida">Só Comida</option>
+        </select>
+        <button class="btn-add" onclick="adicionarParticipante()">➕</button>
+      </div>
+
+      <div id="listaContainer" class="lista-participantes"></div>
+    </div>
+
+    <!-- Bloco 3: Resumo, Pix e WhatsApp -->
+    <div class="card">
+      <h2>📊 Rateio e Recebimento Pix</h2>
+
+      <div class="grid" style="margin-bottom: 12px;">
+        <div class="field">
+          <label>Recebedor (Nome)</label>
+          <input type="text" id="nomePix" value="ORGANIZADOR" maxlength="25" />
+        </div>
+        <div class="field">
+          <label>Chave Pix</label>
+          <input type="text" id="chavePix" placeholder="CPF, Celular ou Email" value="" />
+        </div>
+      </div>
+
+      <p style="font-size: 0.8rem; color: var(--muted);">Clique na cota para alternar o QR Code:</p>
+      <div class="cards-rateio">
+        <div class="card-opcao active" id="btnOptComida" onclick="trocarCategoria('comida')">
+          <span>🍽️ Só Comida</span>
+          <strong id="valSoComida">R$ 0,00</strong>
+        </div>
+
+        <div class="card-opcao" id="btnOptBebida" onclick="trocarCategoria('bebida')">
+          <span>🍻 Comida + Bebida</span>
+          <strong id="valComidaBebida">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <div class="balanco-bar">
+        <span id="txtArrecadado">Arrecadado: R$ 0,00</span>
+        <span id="txtFaltam" style="color: var(--primary);">Faltam: R$ 0,00</span>
+      </div>
+
+      <div class="qr-box">
+        <span id="qrDescricao" style="font-size: 0.85rem; font-weight: 600;">QR Code Pix</span>
+        <div id="qrcode"></div>
+        <button class="btn-copia-cola" id="btnCopiarPix">📋 Copiar Pix Copia e Cola</button>
+      </div>
+
+      <button class="btn-whats" id="btnEnviarWhats">📲 Compartilhar Lista no WhatsApp</button>
+    </div>
+  </div>
+
+  <script>
+    let participantes = [];
+    let categoriaAtual = 'comida';
+    let payloadPixAtual = '';
+
+    document.getElementById('dataEvento').valueAsDate = new Date();
+
+    function emv(id, val) {
+      return id + val.length.toString().padStart(2, '0') + val;
+    }
+
+    function crc16(str) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) {
+          crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
+        }
+      }
+      return crc.toString(16).toUpperCase().padStart(4, '0');
+    }
+
+    function gerarBRCode(chave, nome, valor) {
+      chave = chave.trim();
+      nome = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().substring(0, 25).toUpperCase();
+      const valStr = valor > 0 ? valor.toFixed(2) : '';
+      const merchant = emv('00', 'BR.GOV.BCB.PIX') + emv('01', chave);
+      let payload = 
+        emv('00', '01') +
+        emv('26', merchant) +
+        emv('52', '0000') +
+        emv('53', '986') +
+        (valStr ? emv('54', valStr) : '') +
+        emv('58', 'BR') +
+        emv('59', nome || 'RECEBEDOR') +
+        emv('60', 'BRASIL') +
+        emv('62', emv('05', '***')) +
+        '6304';
+      return payload + crc16(payload);
+    }
+
+    function adicionarParticipante() {
+      const inputNome = document.getElementById('novoNome');
+      const selectTipo = document.getElementById('novoTipo');
+      const nome = inputNome.value.trim();
+      if (!nome) return;
+
+      participantes.push({
+        nome: nome,
+        tipo: selectTipo.value,
+        pago: false
+      });
+
+      inputNome.value = '';
+      atualizarTudo();
+    }
+
+    function alterarTipo(index, novoTipo) {
+      participantes[index].tipo = novoTipo;
+      atualizarTudo();
+    }
+
+    function alternarPago(index) {
+      participantes[index].pago = !participantes[index].pago;
+      atualizarTudo();
+    }
+
+    function removerParticipante(index) {
+      participantes.splice(index, 1);
+      atualizarTudo();
+    }
+
+    function atualizarTudo() {
+      const comida = parseFloat(document.getElementById('gastoComida').value) || 0;
+      const bebida = parseFloat(document.getElementById('gastoBebida').value) || 0;
+
+      const qtdSoComida = participantes.filter(p => p.tipo === 'Só Comida').length;
+      const qtdComidaBebida = participantes.filter(p => p.tipo === 'Comida + Bebida').length;
+      const totalComem = qtdSoComida + qtdComidaBebida;
+      const totalBebem = qtdComidaBebida;
+
+      const

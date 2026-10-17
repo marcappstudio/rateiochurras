@@ -1,0 +1,15 @@
+{
+  "name": "Churrascômetro & Pix",
+  "short_name": "Churrasco",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#ea580c",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
