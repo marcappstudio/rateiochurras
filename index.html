@@ -72,6 +72,11 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
     }
 
+    .card-destaque {
+      background: #fff7ed;
+      border-color: #ffedd5;
+    }
+
     .header-brand {
       display: flex;
       align-items: center;
@@ -289,6 +294,15 @@
       padding: 4px;
     }
 
+    .sugestao-lista {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
     .cards-rateio {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -384,7 +398,6 @@
       cursor: pointer;
     }
 
-    /* Histórico de Churrascos */
     .lista-historico {
       display: flex;
       flex-direction: column;
@@ -439,7 +452,6 @@
       cursor: pointer;
     }
 
-    /* Seção de Ajuda (Sanfona / FAQ no rodapé) */
     details.faq-item {
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -476,7 +488,6 @@
       line-height: 1.45;
     }
 
-    /* Modal de Ajuda Passo a Passo */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -631,6 +642,17 @@
       <div id="listaContainer" class="lista-participantes"></div>
     </div>
 
+    <!-- Bloco 2.1: Sugestão Automática de Carnes e Bebidas -->
+    <div class="card card-destaque">
+      <h2>🥩 Sugestão de Compras</h2>
+      <p class="subtitle">Cálculo automático baseado nos <span id="txtQtdPessoas">0</span> convidados confirmados:</p>
+      <ul class="sugestao-lista">
+        <li>🥩 <strong>Carne Total (Bovina/Frango/Linguiça):</strong> <span id="sugestaoCarne">0.0 kg</span></li>
+        <li>🍻 <strong>Cerveja:</strong> <span id="sugestaoCerveja">0.0 Litros</span> (para quem consome bebida)</li>
+        <li>🥤 <strong>Refrigerante / Água:</strong> <span id="sugestaoRefri">0.0 Litros</span></li>
+      </ul>
+    </div>
+
     <!-- Bloco 3: Rateio e Pix -->
     <div class="card">
       <h2>📊 Rateio e Recebimento Pix</h2>
@@ -690,7 +712,7 @@
 
       <details class="faq-item">
         <summary>Como mudar alguém de "Só Comida" para "Comida + Bebida"?</summary>
-        <p>Não precisa excluir a pessoa! Na própria linha do participante, toque na caixinha ao lado do nome dele e mude a opção. O aplicativo recalcula o valor de todo mundo na mesma hora.</p>
+        <p>Não precisa excluir a pessoa! Na própria linha do participante, toque na caixinha de seleção ao lado do nome dele e mude a opção. O aplicativo recalcula o valor de todo mundo na mesma hora.</p>
       </details>
 
       <details class="faq-item">
@@ -732,24 +754,24 @@
       <div class="passo-ajuda">
         <div class="passo-numero">3</div>
         <div class="passo-texto">
-          <strong>Controle quem já pagou</strong>
-          <span>Conforme o pessoal for pagando, marque a caixinha ✅ ao lado do nome. O app soma o total arrecadado e mostra quanto ainda falta.</span>
+          <strong>Acompanhe as Sugestões de Compra</strong>
+          <span>Veja automaticamente a quantidade ideal de carne e bebidas recomendada para o total de pessoas cadastradas.</span>
         </div>
       </div>
 
       <div class="passo-ajuda">
         <div class="passo-numero">4</div>
         <div class="passo-texto">
-          <strong>Cobre com QR Code Pix ou WhatsApp</strong>
-          <span>Preencha sua Chave Pix para exibir o QR Code na tela ou toque no botão verde para enviar o resumo completo no grupo do WhatsApp!</span>
+          <strong>Controle quem já pagou</strong>
+          <span>Conforme o pessoal for pagando, marque a caixinha ✅ ao lado do nome. O app soma o total arrecadado e mostra quanto ainda falta.</span>
         </div>
       </div>
 
       <div class="passo-ajuda">
         <div class="passo-numero">5</div>
         <div class="passo-texto">
-          <strong>Guarde no Histórico</strong>
-          <span>Use o botão "💾 Salvar no Histórico" no topo da tela para guardar o churrasco na sua lista de eventos realizados.</span>
+          <strong>Cobre com Pix ou WhatsApp</strong>
+          <span>Preencha sua Chave Pix para exibir o QR Code na tela ou toque no botão verde para enviar o resumo completo no grupo do WhatsApp!</span>
         </div>
       </div>
 
@@ -1070,6 +1092,16 @@
       const totalComem = qtdSoComida + qtdComidaBebida;
       const totalBebem = qtdComidaBebida;
 
+      // Atualiza Calculadora de Insumos Automática
+      document.getElementById('txtQtdPessoas').innerText = totalComem;
+      const kgCarne = (totalComem * 0.450).toFixed(1).replace('.', ',');
+      const litrosCerveja = (totalBebem * 3.5).toFixed(1).replace('.', ',');
+      const litrosRefri = (totalComem * 0.6).toFixed(1).replace('.', ',');
+
+      document.getElementById('sugestaoCarne').innerText = `${kgCarne} kg`;
+      document.getElementById('sugestaoCerveja').innerText = `${litrosCerveja} L`;
+      document.getElementById('sugestaoRefri').innerText = `${litrosRefri} L`;
+
       const cotaComida = totalComem > 0 ? (comida / totalComem) : 0;
       const cotaBebida = totalBebem > 0 ? (bebida / totalBebem) : 0;
 
@@ -1213,40 +1245,4 @@
     document.getElementById('btnEnviarWhats').addEventListener('click', () => {
       const titulo = document.getElementById('titulo').value || 'Churrasco';
       const rawData = document.getElementById('dataEvento').value;
-      const hora = document.getElementById('horaEvento').value;
-      const chave = document.getElementById('chavePix').value;
-      const vComida = document.getElementById('valSoComida').innerText;
-      const vBebida = document.getElementById('valComidaBebida').innerText;
-
-      const dataFmt = rawData ? `${formatarDataBR(rawData)} às ${hora}` : 'A definir';
-
-      const listaStr = participantes.length > 0
-        ? participantes.map(p => `- ${p.nome} (${p.tipo}): ${p.pago ? '[PAGO ✅]' : '[PENDENTE]'}`).join('\n')
-        : 'Nenhum participante na lista ainda.';
-
-      const msg = 
-`🥩 *${titulo}*
-📅 *Data:* ${dataFmt}
-
-📊 *Valores do Rateio:*
-🍽️ *Só Comida:* ${vComida}
-🍻 *Comida + Bebida:* ${vBebida}
-
-👥 *Participantes:*
-${listaStr}
-${chave ? `\n💳 *Chave Pix:* ${chave}` : ''}
-
-Favor enviar o comprovante para darmos baixa! 🔥`;
-
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-    });
-
-    ['titulo', 'gastoComida', 'gastoBebida', 'chavePix', 'nomePix'].forEach(id => {
-      document.getElementById(id).addEventListener('input', atualizarTudo);
-    });
-
-    carregarEstadoLocal();
-    atualizarTudo();
-  </script>
-</body>
-</html>
+      const hora = document.getElementById('hora
