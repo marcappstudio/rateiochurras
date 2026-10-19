@@ -6,15 +6,7 @@
   
   <title>Churrascômetro & Pix | Calculadora de Rateio de Churrasco</title>
   <meta name="description" content="Organize seu churrasco sem dor de cabeça. Calcule o rateio justo separando quem só come de quem bebe, controle a lista de presença e gere o QR Code Pix na hora." />
-  <meta name="keywords" content="rateio de churrasco, calculadora de churrasco, churrascômetro, dividir conta churrasco, qr code pix churrasco, organizar churrasco" />
   <meta name="author" content="RevLevih" />
-  <meta name="robots" content="index, follow" />
-
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="🥩 Churrascômetro & Rateio Pix" />
-  <meta property="og:description" content="Calcule o rateio proporcional (Só Comida vs. Comida + Bebida), acompanhe quem já pagou e gere o QR Code Pix instantaneamente." />
-  <meta property="og:image" content="icon.png" />
-  <meta property="og:locale" content="pt_BR" />
 
   <meta name="theme-color" content="#ea580c" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -117,10 +109,6 @@
       white-space: nowrap;
     }
 
-    .btn-ajuda-topo:hover {
-      background: #ffedd5;
-    }
-
     h1 {
       font-size: 1.25rem;
       color: var(--primary);
@@ -157,7 +145,6 @@
       border: 1px solid var(--border);
       background: #f8fafc;
       color: var(--text);
-      transition: all 0.15s;
     }
 
     .btn-acao-topo.salvar {
@@ -232,10 +219,6 @@
       cursor: pointer;
     }
 
-    .btn-add:hover {
-      background: var(--primary-hover);
-    }
-
     .lista-participantes {
       display: flex;
       flex-direction: column;
@@ -286,7 +269,6 @@
       padding: 4px;
     }
 
-    /* Aba Colapsável de Sugestão de Carnes */
     details.card-calculadora {
       background: #fff7ed;
       border-color: #ffedd5;
@@ -301,15 +283,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    details.card-calculadora summary::after {
-      content: "▼";
-      font-size: 0.75rem;
-    }
-
-    details.card-calculadora[open] summary::after {
-      content: "▲";
     }
 
     .sugestao-lista {
@@ -492,23 +465,6 @@
       align-items: center;
     }
 
-    details.faq-item summary::after {
-      content: "➕";
-      font-size: 0.75rem;
-      color: var(--primary);
-    }
-
-    details.faq-item[open] summary::after {
-      content: "➖";
-    }
-
-    details.faq-item p {
-      margin-top: 8px;
-      font-size: 0.83rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -557,51 +513,15 @@
       font-weight: 700;
       cursor: pointer;
     }
-
-    .passo-ajuda {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 14px;
-      align-items: flex-start;
-    }
-
-    .passo-numero {
-      background: var(--primary);
-      color: white;
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .passo-texto strong {
-      display: block;
-      font-size: 0.9rem;
-      margin-bottom: 2px;
-    }
-
-    .passo-texto span {
-      font-size: 0.82rem;
-      color: var(--muted);
-      line-height: 1.4;
-      display: block;
-    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- Bloco 1: Evento e Gastos -->
     <div class="card">
       <div class="header-brand">
         <div class="header-left">
-          <img src="icon.png" alt="Ícone Churrasco" onerror="this.style.display='none'" />
+          <img src="icon.png" alt="Ícone" onerror="this.style.display='none'" />
           <h1>Churrascômetro</h1>
         </div>
         <div class="header-right">
@@ -623,7 +543,7 @@
         </div>
 
         <div class="field">
-          <label>Data (DD/MM/AAAA)</label>
+          <label>Data</label>
           <input type="date" id="dataEvento" />
         </div>
 
@@ -633,7 +553,7 @@
         </div>
 
         <div id="avisoDataHora" class="aviso-data">
-          ⚠️ Não é permitido agendar em data ou horário que já passou. Ajustamos para o horário atual!
+          ⚠️ Data ou horário no passado não permitidos. Ajustado para o atual!
         </div>
 
         <div class="field">
@@ -648,7 +568,6 @@
       </div>
     </div>
 
-    <!-- Bloco 2: Lista de Participantes -->
     <div class="card">
       <h2>👥 Lista de Participantes</h2>
       <div class="add-row">
@@ -663,18 +582,16 @@
       <div id="listaContainer" class="lista-participantes"></div>
     </div>
 
-    <!-- Bloco 2.1: Aba Colapsável de Sugestão de Carnes e Bebidas -->
     <details class="card card-calculadora">
       <summary>🥩 Sugestão Automática de Compras</summary>
       <ul class="sugestao-lista">
-        <li>👥 <strong>Convidados na lista:</strong> <span id="txtQtdPessoas">0</span> pessoas</li>
-        <li>🥩 <strong>Carne Total Sugerida:</strong> <span id="sugestaoCarne">0.0 kg</span> (aprox. 450g / pessoa)</li>
-        <li>🍻 <strong>Cerveja Sugerida:</strong> <span id="sugestaoCerveja">0.0 Litros</span> (para quem bebe)</li>
-        <li>🥤 <strong>Refrigerante / Água:</strong> <span id="sugestaoRefri">0.0 Litros</span></li>
+        <li>👥 <strong>Convidados:</strong> <span id="txtQtdPessoas">0</span> pessoas</li>
+        <li>🥩 <strong>Carne Sugerida:</strong> <span id="sugestaoCarne">0.0 kg</span> (450g / pessoa)</li>
+        <li>🍻 <strong>Cerveja Sugerida:</strong> <span id="sugestaoCerveja">0.0 L</span></li>
+        <li>🥤 <strong>Refris / Água:</strong> <span id="sugestaoRefri">0.0 L</span></li>
       </ul>
     </details>
 
-    <!-- Bloco 3: Rateio e Pix -->
     <div class="card">
       <h2>📊 Rateio e Recebimento Pix</h2>
 
@@ -685,11 +602,11 @@
         </div>
         <div class="field">
           <label>Chave Pix</label>
-          <input type="text" id="chavePix" placeholder="Digite CPF, Celular ou Email" value="" />
+          <input type="text" id="chavePix" placeholder="CPF, Celular ou Email" />
         </div>
       </div>
 
-      <p style="font-size: 0.8rem; color: var(--muted);">Toque em uma das cotas abaixo para gerar o QR Code dela:</p>
+      <p style="font-size: 0.8rem; color: var(--muted);">Toque na cota para gerar o QR Code:</p>
       <div class="cards-rateio">
         <div class="card-opcao active" id="btnOptComida">
           <span>🍽️ Só Comida</span>
@@ -713,324 +630,211 @@
         <button type="button" class="btn-copia-cola" id="btnCopiarPix">📋 Copiar Pix Copia e Cola</button>
       </div>
 
-      <button type="button" class="btn-whats" id="btnEnviarWhats">📲 Compartilhar Lista no WhatsApp</button>
+      <button type="button" class="btn-whats" id="btnEnviarWhats">📲 Compartilhar no WhatsApp</button>
     </div>
 
-    <!-- Bloco 4: Histórico de Churrascos Anteriores -->
     <div class="card">
       <h2>📚 Histórico de Churrascos</h2>
       <div id="historicoContainer" class="lista-historico"></div>
     </div>
-
-    <!-- Bloco 5: Seção de Ajuda e Dúvidas Frequentes -->
-    <div class="card">
-      <h2>💡 Dúvidas Rápidas (Ajuda)</h2>
-
-      <details class="faq-item">
-        <summary>Como funciona o cálculo proporcional?</summary>
-        <p>O valor gasto em <strong>Comida</strong> é dividido igualmente entre todos os presentes. Já o valor gasto em <strong>Bebida</strong> é dividido apenas entre aqueles marcados como "Comida + Bebida". Assim, quem não bebe paga apenas a sua parte da comida.</p>
-      </details>
-
-      <details class="faq-item">
-        <summary>Como mudar alguém de "Só Comida" para "Comida + Bebida"?</summary>
-        <p>Não precisa excluir a pessoa! Na própria linha do participante, toque na caixinha de seleção ao lado do nome dele e mude a opção. O aplicativo recalcula o valor de todo mundo na mesma hora.</p>
-      </details>
-
-      <details class="faq-item">
-        <summary>Como gerar o QR Code Pix para cada grupo?</summary>
-        <p>Digite sua chave Pix no campo indicado. Depois, basta tocar no cartão <strong>"🍽️ Só Comida"</strong> ou no cartão <strong>"🍻 Comida + Bebida"</strong> para o QR Code e o botão Copia e Cola mudarem imediatamente para o valor escolhido.</p>
-      </details>
-
-      <details class="faq-item">
-        <summary>Meus dados somem se eu fechar o aplicativo?</summary>
-        <p>Não! Tudo fica salvo automaticamente na memória do seu celular. Além disso, você pode clicar em <strong>"💾 Salvar no Histórico"</strong> lá no topo para arquivar vários churrascos diferentes e consultá-los quando quiser.</p>
-      </details>
-    </div>
   </div>
 
-  <!-- Janela Modal Passo a Passo ("Como Usar") -->
   <div class="modal-overlay" id="modalAjuda">
     <div class="modal-box">
       <div class="modal-header">
         <h3>🥩 Como usar o Churrascômetro</h3>
         <button type="button" class="btn-fechar-modal" id="btnFecharAjuda">✕</button>
       </div>
-
-      <div class="passo-ajuda">
-        <div class="passo-numero">1</div>
-        <div class="passo-texto">
-          <strong>Defina a Data e os Gastos</strong>
-          <span>Escolha o nome, a data (sempre de hoje em diante) e digite quanto foi gasto no total com Comida e com Bebida.</span>
-        </div>
-      </div>
-
-      <div class="passo-ajuda">
-        <div class="passo-numero">2</div>
-        <div class="passo-texto">
-          <strong>Adicione a Galera</strong>
-          <span>Digite o nome de cada convidado, escolha se ele vai consumir "Comida + Bebida" ou "Só Comida" e toque no botão ➕.</span>
-        </div>
-      </div>
-
-      <div class="passo-ajuda">
-        <div class="passo-numero">3</div>
-        <div class="passo-texto">
-          <strong>Controle quem já pagou</strong>
-          <span>Conforme o pessoal for pagando, marque a caixinha ✅ ao lado do nome. O app soma o total arrecadado e mostra quanto ainda falta.</span>
-        </div>
-      </div>
-
-      <div class="passo-ajuda">
-        <div class="passo-numero">4</div>
-        <div class="passo-texto">
-          <strong>Cobre com Pix ou WhatsApp</strong>
-          <span>Preencha sua Chave Pix para exibir o QR Code na tela ou toque no botão verde para enviar o resumo completo no grupo do WhatsApp!</span>
-        </div>
-      </div>
-
-      <button type="button" class="btn-whats" style="background: var(--primary); margin-top: 6px;" id="btnEntendiAjuda">👍 Entendi, vamos lá!</button>
+      <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5;">
+        1. Defina a data (apenas hoje em diante) e os custos.<br>
+        2. Adicione os convidados e escolha o tipo de consumo.<br>
+        3. Acompanhe a sugestão de carnes e controle quem já pagou.<br>
+        4. Insira sua chave Pix para gerar o QR Code instantaneamente!
+      </p>
     </div>
   </div>
 
   <script>
-    const STORAGE_ATUAL = 'churrasco_app_estado_atual_v3';
-    const STORAGE_HISTORICO = 'churrasco_app_historico_v3';
+    const STORAGE_KEY = 'churrasco_app_v4';
+    const HISTORICO_KEY = 'churrasco_app_hist_v4';
 
-    let idEventoAtual = null;
-    let participantes = [];
-    let historicoChurrascos = [];
+    let estado = {
+      id: Date.now(),
+      titulo: 'Churrasco da Galera',
+      data: '',
+      hora: '',
+      gastoComida: 300,
+      gastoBebida: 180,
+      nomePix: 'ORGANIZADOR',
+      chavePix: '',
+      participantes: [],
+      modoHistorico: false
+    };
+
+    let historico = [];
     let categoriaAtual = 'comida';
     let payloadPixAtual = '';
-    let modoHistorico = false;
 
-    function obterDataHojeStr() {
-      const agora = new Date();
-      const ano = agora.getFullYear();
-      const mes = String(agora.getMonth() + 1).padStart(2, '0');
-      const dia = String(agora.getDate()).padStart(2, '0');
-      return `${ano}-${mes}-${dia}`;
+    function hojeISO() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
 
-    function obterHoraAtualStr() {
-      const agora = new Date();
-      const horas = String(agora.getHours()).padStart(2, '0');
-      const minutos = String(agora.getMinutes()).padStart(2, '0');
-      return `${horas}:${minutos}`;
+    function horaAtualStr() {
+      const d = new Date();
+      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
     }
 
-    function formatarDataBR(dataISO) {
-      if (!dataISO) return '';
-      const partes = dataISO.split('-');
-      return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : dataISO;
+    function carregarDados() {
+      try {
+        const histRaw = localStorage.getItem(HISTORICO_KEY);
+        if (histRaw) historico = JSON.parse(histRaw);
+
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          estado = JSON.parse(saved);
+        } else {
+          estado.data = hojeISO();
+          estado.hora = horaAtualStr();
+        }
+      } catch (e) {
+        estado.data = hojeISO();
+        estado.hora = horaAtualStr();
+      }
+
+      document.getElementById('titulo').value = estado.titulo;
+      document.getElementById('dataEvento').value = estado.data || hojeISO();
+      document.getElementById('horaEvento').value = estado.hora || horaAtualStr();
+      document.getElementById('gastoComida').value = estado.gastoComida;
+      document.getElementById('gastoBebida').value = estado.gastoBebida;
+      document.getElementById('nomePix').value = estado.nomePix;
+      document.getElementById('chavePix').value = estado.chavePix;
+
+      validarDataHora(false);
     }
 
-    function validarDataHora(exibirAlerta = true) {
+    function salvarDados() {
+      estado.titulo = document.getElementById('titulo').value;
+      estado.data = document.getElementById('dataEvento').value;
+      estado.hora = document.getElementById('horaEvento').value;
+      estado.gastoComida = document.getElementById('gastoComida').value;
+      estado.gastoBebida = document.getElementById('gastoBebida').value;
+      estado.nomePix = document.getElementById('nomePix').value;
+      estado.chavePix = document.getElementById('chavePix').value;
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+      } catch (e) {}
+    }
+
+    function validarDataHora(avisoVisual = true) {
       const inputData = document.getElementById('dataEvento');
       const inputHora = document.getElementById('horaEvento');
       const aviso = document.getElementById('avisoDataHora');
 
-      const hojeStr = obterDataHojeStr();
-      const horaAgoraStr = obterHoraAtualStr();
+      const hj = hojeISO();
+      const hr = horaAtualStr();
 
-      if (!modoHistorico) {
-        inputData.min = hojeStr;
+      if (!estado.modoHistorico) {
+        inputData.min = hj;
       } else {
         inputData.removeAttribute('min');
-      }
-
-      if (modoHistorico) {
         aviso.style.display = 'none';
-        return true;
+        return;
       }
 
-      let corrigiu = false;
-
-      if (!inputData.value || inputData.value < hojeStr) {
-        inputData.value = hojeStr;
-        corrigiu = true;
+      let alterou = false;
+      if (!inputData.value || inputData.value < hj) {
+        inputData.value = hj;
+        alterou = true;
       }
 
-      if (inputData.value === hojeStr) {
-        inputHora.min = horaAgoraStr;
-        if (!inputHora.value || inputHora.value < horaAgoraStr) {
-          inputHora.value = horaAgoraStr;
-          corrigiu = true;
+      if (inputData.value === hj) {
+        inputHora.min = hr;
+        if (!inputHora.value || inputHora.value < hr) {
+          inputHora.value = hr;
+          alterou = true;
         }
       } else {
         inputHora.removeAttribute('min');
       }
 
-      if (corrigiu && exibirAlerta) {
+      if (alterou && avisoVisual) {
         aviso.style.display = 'block';
-        setTimeout(() => { aviso.style.display = 'none'; }, 4500);
+        setTimeout(() => { aviso.style.display = 'none'; }, 4000);
       }
-
-      return !corrigiu;
     }
 
-    function salvarEstadoLocal() {
-      const estado = {
-        id: idEventoAtual,
-        titulo: document.getElementById('titulo').value,
-        data: document.getElementById('dataEvento').value,
-        hora: document.getElementById('horaEvento').value,
-        gastoComida: document.getElementById('gastoComida').value,
-        gastoBebida: document.getElementById('gastoBebida').value,
-        nomePix: document.getElementById('nomePix').value,
-        chavePix: document.getElementById('chavePix').value,
-        participantes: participantes,
-        modoHistorico: modoHistorico
-      };
-      try {
-        localStorage.setItem(STORAGE_ATUAL, JSON.stringify(estado));
-      } catch (e) {}
-    }
+    function atualizarTudo() {
+      validarDataHora(true);
+      salvarDados();
 
-    function carregarEstadoLocal() {
-      try {
-        const histRaw = localStorage.getItem(STORAGE_HISTORICO);
-        if (histRaw) {
-          historicoChurrascos = JSON.parse(histRaw);
-        }
+      const cComida = parseFloat(estado.gastoComida) || 0;
+      const cBebida = parseFloat(estado.gastoBebida) || 0;
 
-        const salvoRaw = localStorage.getItem(STORAGE_ATUAL);
-        if (salvoRaw) {
-          const d = JSON.parse(salvoRaw);
-          idEventoAtual = d.id || Date.now();
-          document.getElementById('titulo').value = d.titulo ?? 'Churrasco da Galera';
-          document.getElementById('dataEvento').value = d.data || obterDataHojeStr();
-          document.getElementById('horaEvento').value = d.hora || obterHoraAtualStr();
-          document.getElementById('gastoComida').value = d.gastoComida ?? 300;
-          document.getElementById('gastoBebida').value = d.gastoBebida ?? 180;
-          document.getElementById('nomePix').value = d.nomePix ?? 'ORGANIZADOR';
-          document.getElementById('chavePix').value = d.chavePix ?? '';
-          participantes = Array.isArray(d.participantes) ? d.participantes : [];
-          modoHistorico = Boolean(d.modoHistorico);
-          validarDataHora(false);
-          return;
-        }
-      } catch (e) {}
+      const qtdComem = estado.participantes.length;
+      const qtdBebem = estado.participantes.filter(p => p.tipo === 'Comida + Bebida').length;
 
-      idEventoAtual = Date.now();
-      document.getElementById('dataEvento').value = obterDataHojeStr();
-      document.getElementById('horaEvento').value = obterHoraAtualStr();
-      validarDataHora(false);
-    }
+      // Insumos
+      document.getElementById('txtQtdPessoas').innerText = qtdComem;
+      document.getElementById('sugestaoCarne').innerText = `${(qtdComem * 0.45).toFixed(1).replace('.', ',')} kg`;
+      document.getElementById('sugestaoCerveja').innerText = `${(qtdBebem * 3.5).toFixed(1).replace('.', ',')} L`;
+      document.getElementById('sugestaoRefri').innerText = `${(qtdComem * 0.6).toFixed(1).replace('.', ',')} L`;
 
-    function salvarNoHistorico() {
-      const comida = parseFloat(document.getElementById('gastoComida').value) || 0;
-      const bebida = parseFloat(document.getElementById('gastoBebida').value) || 0;
-      const titulo = document.getElementById('titulo').value.trim() || 'Churrasco';
-      const data = document.getElementById('dataEvento').value;
-      const hora = document.getElementById('horaEvento').value;
+      // Rateio
+      const cotaComida = qtdComem > 0 ? (cComida / qtdComem) : 0;
+      const cotaBebida = qtdBebem > 0 ? (cBebida / qtdBebem) : 0;
 
-      if (!idEventoAtual) idEventoAtual = Date.now();
+      const vSoComida = cotaComida;
+      const vComidaBebida = cotaComida + cotaBebida;
 
-      const registro = {
-        id: idEventoAtual,
-        titulo: titulo,
-        data: data,
-        hora: hora,
-        gastoComida: comida,
-        gastoBebida: bebida,
-        nomePix: document.getElementById('nomePix').value,
-        chavePix: document.getElementById('chavePix').value,
-        participantes: JSON.parse(JSON.stringify(participantes)),
-        salvoEm: new Date().toLocaleString('pt-BR')
-      };
+      document.getElementById('valSoComida').innerText = `R$ ${vSoComida.toFixed(2).replace('.', ',')}`;
+      document.getElementById('valComidaBebida').innerText = `R$ ${vComidaBebida.toFixed(2).replace('.', ',')}`;
 
-      const idxExistente = historicoChurrascos.findIndex(item => item.id === idEventoAtual);
-      if (idxExistente >= 0) {
-        historicoChurrascos[idxExistente] = registro;
-      } else {
-        historicoChurrascos.unshift(registro);
-      }
-
-      localStorage.setItem(STORAGE_HISTORICO, JSON.stringify(historicoChurrascos));
-      renderizarHistorico();
-      alert(`"${titulo}" foi salvo no Histórico de Churrascos!`);
-    }
-
-    function iniciarNovoChurrasco() {
-      if (participantes.length > 0) {
-        const confirmar = confirm('Deseja iniciar um novo churrasco em branco? (Dica: clique em "Salvar no Histórico" antes se quiser guardar o atual).');
-        if (!confirmar) return;
-      }
-
-      modoHistorico = false;
-      idEventoAtual = Date.now();
-      document.getElementById('titulo').value = 'Churrasco da Galera';
-      document.getElementById('dataEvento').value = obterDataHojeStr();
-      document.getElementById('horaEvento').value = obterHoraAtualStr();
-      document.getElementById('gastoComida').value = '300';
-      document.getElementById('gastoBebida').value = '180';
-      participantes = [];
-
-      validarDataHora(false);
-      atualizarTudo();
-    }
-
-    window.carregarDoHistorico = function(id) {
-      const encontrado = historicoChurrascos.find(item => item.id === id);
-      if (!encontrado) return;
-
-      modoHistorico = true;
-      idEventoAtual = encontrado.id;
-      document.getElementById('titulo').value = encontrado.titulo;
-      document.getElementById('dataEvento').value = encontrado.data;
-      document.getElementById('horaEvento').value = encontrado.hora;
-      document.getElementById('gastoComida').value = encontrado.gastoComida;
-      document.getElementById('gastoBebida').value = encontrado.gastoBebida;
-      if (encontrado.nomePix) document.getElementById('nomePix').value = encontrado.nomePix;
-      if (encontrado.chavePix) document.getElementById('chavePix').value = encontrado.chavePix;
-      participantes = JSON.parse(JSON.stringify(encontrado.participantes || []));
-
-      validarDataHora(false);
-      atualizarTudo();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    window.excluirDoHistorico = function(id) {
-      if (!confirm('Tem certeza que deseja excluir este churrasco do histórico?')) return;
-      historicoChurrascos = historicoChurrascos.filter(item => item.id !== id);
-      localStorage.setItem(STORAGE_HISTORICO, JSON.stringify(historicoChurrascos));
-      renderizarHistorico();
-    };
-
-    function renderizarHistorico() {
-      const container = document.getElementById('historicoContainer');
+      // Lista de Participantes
+      const container = document.getElementById('listaContainer');
       container.innerHTML = '';
 
-      if (historicoChurrascos.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:#64748b; text-align:center; padding:8px;">Nenhum churrasco salvo no histórico ainda. Clique em "💾 Salvar no Histórico" lá no topo para guardar seus eventos.</p>';
-        return;
+      if (estado.participantes.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:#64748b; text-align:center; padding:8px;">Nenhum participante ainda. Digite acima e clique em ➕.</p>';
+      } else {
+        estado.participantes.forEach((p, idx) => {
+          const valorDevido = p.tipo === 'Só Comida' ? vSoComida : vComidaBebida;
+          const div = document.createElement('div');
+          div.className = `item-participante ${p.pago ? 'pago' : ''}`;
+          div.innerHTML = `
+            <input type="checkbox" ${p.pago ? 'checked' : ''} onchange="alternarPago(${idx})" />
+            <strong>${p.nome}</strong>
+            <select onchange="alterarTipo(${idx}, this.value)">
+              <option value="Comida + Bebida" ${p.tipo === 'Comida + Bebida' ? 'selected' : ''}>Comida + Bebida</option>
+              <option value="Só Comida" ${p.tipo === 'Só Comida' ? 'selected' : ''}>Só Comida</option>
+            </select>
+            <span class="valor-tag" style="color: ${p.pago ? '#16a34a' : '#0f172a'}">
+              ${p.pago ? '✅ Pago' : 'R$ ' + valorDevido.toFixed(2).replace('.', ',')}
+            </span>
+            <button type="button" class="btn-del" onclick="removerParticipante(${idx})">❌</button>
+          `;
+          container.appendChild(div);
+        });
       }
 
-      historicoChurrascos.forEach(item => {
-        const total = (parseFloat(item.gastoComida) || 0) + (parseFloat(item.gastoBebida) || 0);
-        const qtdPessoas = Array.isArray(item.participantes) ? item.participantes.length : 0;
-        const qtdPagos = Array.isArray(item.participantes) ? item.participantes.filter(p => p.pago).length : 0;
-
-        const div = document.createElement('div');
-        div.className = 'item-historico';
-        div.innerHTML = `
-          <div class="info-historico">
-            <strong>🥩 ${item.titulo}</strong>
-            <span>📅 ${formatarDataBR(item.data)} às ${item.hora || '--:--'} • 💰 R$ ${total.toFixed(2).replace('.', ',')} • 👥 ${qtdPagos}/${qtdPessoas} pagos</span>
-          </div>
-          <div class="acoes-historico">
-            <button type="button" class="btn-hist-abrir" onclick="window.carregarDoHistorico(${item.id})">📂 Abrir</button>
-            <button type="button" class="btn-hist-del" onclick="window.excluirDoHistorico(${item.id})">🗑️</button>
-          </div>
-        `;
-        container.appendChild(div);
+      // Balanço
+      let arrecadado = 0;
+      estado.participantes.forEach(p => {
+        if (p.pago) arrecadado += (p.tipo === 'Só Comida' ? vSoComida : vComidaBebida);
       });
+      const totalGasto = cComida + cBebida;
+      const faltam = Math.max(0, totalGasto - arrecadado);
+
+      document.getElementById('txtArrecadado').innerText = `Arrecadado: R$ ${arrecadado.toFixed(2).replace('.', ',')}`;
+      document.getElementById('txtFaltam').innerText = faltam > 0 ? `Faltam: R$ ${faltam.toFixed(2).replace('.', ',')}` : 'Quitado! 🎉';
+
+      renderizarPix(vSoComida, vComidaBebida);
+      renderizarHistorico();
     }
 
-    function emv(id, val) {
-      return id + val.length.toString().padStart(2, '0') + val;
-    }
-
+    // Pix BR Code
+    function emv(id, val) { return id + val.length.toString().padStart(2, '0') + val; }
     function crc16(str) {
       let crc = 0xFFFF;
       for (let i = 0; i < str.length; i++) {
@@ -1042,197 +846,145 @@
       return crc.toString(16).toUpperCase().padStart(4, '0');
     }
 
-    function gerarBRCode(chave, nome, valor) {
-      chave = chave.trim();
-      nome = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().substring(0, 25).toUpperCase();
-      const valStr = valor > 0 ? valor.toFixed(2) : '';
-      const merchant = emv('00', 'BR.GOV.BCB.PIX') + emv('01', chave);
-      let payload = 
-        emv('00', '01') +
-        emv('26', merchant) +
-        emv('52', '0000') +
-        emv('53', '986') +
-        (valStr ? emv('54', valStr) : '') +
-        emv('58', 'BR') +
-        emv('59', nome || 'RECEBEDOR') +
-        emv('60', 'BRASIL') +
-        emv('62', emv('05', '***')) +
-        '6304';
-      return payload + crc16(payload);
-    }
-
-    function adicionarParticipante() {
-      const inputNome = document.getElementById('novoNome');
-      const selectTipo = document.getElementById('novoTipo');
-      const nome = inputNome.value.trim();
-      if (!nome) {
-        inputNome.focus();
-        return;
-      }
-
-      participantes.push({
-        nome: nome,
-        tipo: selectTipo.value,
-        pago: false
-      });
-
-      inputNome.value = '';
-      inputNome.focus();
-      atualizarTudo();
-    }
-
-    window.alterarTipo = function(index, novoTipo) {
-      participantes[index].tipo = novoTipo;
-      atualizarTudo();
-    };
-
-    window.alternarPago = function(index) {
-      participantes[index].pago = !participantes[index].pago;
-      atualizarTudo();
-    };
-
-    window.removerParticipante = function(index) {
-      participantes.splice(index, 1);
-      atualizarTudo();
-    };
-
-    function atualizarTudo() {
-      const comida = parseFloat(document.getElementById('gastoComida').value) || 0;
-      const bebida = parseFloat(document.getElementById('gastoBebida').value) || 0;
-
-      const qtdSoComida = participantes.filter(p => p.tipo === 'Só Comida').length;
-      const qtdComidaBebida = participantes.filter(p => p.tipo === 'Comida + Bebida').length;
-      const totalComem = qtdSoComida + qtdComidaBebida;
-      const totalBebem = qtdComidaBebida;
-
-      // Atualiza Calculadora de Insumos Automática
-      document.getElementById('txtQtdPessoas').innerText = totalComem;
-      const kgCarne = (totalComem * 0.450).toFixed(1).replace('.', ',');
-      const litrosCerveja = (totalBebem * 3.5).toFixed(1).replace('.', ',');
-      const litrosRefri = (totalComem * 0.6).toFixed(1).replace('.', ',');
-
-      document.getElementById('sugestaoCarne').innerText = `${kgCarne} kg`;
-      document.getElementById('sugestaoCerveja').innerText = `${litrosCerveja} L`;
-      document.getElementById('sugestaoRefri').innerText = `${litrosRefri} L`;
-
-      const cotaComida = totalComem > 0 ? (comida / totalComem) : 0;
-      const cotaBebida = totalBebem > 0 ? (bebida / totalBebem) : 0;
-
-      const vComida = cotaComida;
-      const vComidaBebida = cotaComida + cotaBebida;
-
-      document.getElementById('valSoComida').innerText = `R$ ${vComida.toFixed(2).replace('.', ',')}`;
-      document.getElementById('valComidaBebida').innerText = `R$ ${vComidaBebida.toFixed(2).replace('.', ',')}`;
-
-      const container = document.getElementById('listaContainer');
-      container.innerHTML = '';
-
-      if (participantes.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:#64748b; text-align:center; padding:8px;">Nenhum participante adicionado ainda. Digite um nome acima e toque em ➕.</p>';
-      } else {
-        participantes.forEach((p, idx) => {
-          const valorPessoa = p.tipo === 'Só Comida' ? vComida : vComidaBebida;
-          const div = document.createElement('div');
-          div.className = `item-participante ${p.pago ? 'pago' : ''}`;
-          div.innerHTML = `
-            <input type="checkbox" ${p.pago ? 'checked' : ''} onchange="window.alternarPago(${idx})" title="Marcar pago" />
-            <strong>${p.nome}</strong>
-            <select onchange="window.alterarTipo(${idx}, this.value)">
-              <option value="Comida + Bebida" ${p.tipo === 'Comida + Bebida' ? 'selected' : ''}>Comida + Bebida</option>
-              <option value="Só Comida" ${p.tipo === 'Só Comida' ? 'selected' : ''}>Só Comida</option>
-            </select>
-            <span class="valor-tag" style="color: ${p.pago ? '#16a34a' : '#0f172a'}">
-              ${p.pago ? '✅ Pago' : 'R$ ' + valorPessoa.toFixed(2).replace('.', ',')}
-            </span>
-            <button type="button" class="btn-del" onclick="window.removerParticipante(${idx})">❌</button>
-          `;
-          container.appendChild(div);
-        });
-      }
-
-      let arrecadado = 0;
-      participantes.forEach(p => {
-        if (p.pago) {
-          arrecadado += (p.tipo === 'Só Comida' ? vComida : vComidaBebida);
-        }
-      });
-      const totalGasto = comida + bebida;
-      const faltam = Math.max(0, totalGasto - arrecadado);
-
-      document.getElementById('txtArrecadado').innerText = `Arrecadado: R$ ${arrecadado.toFixed(2).replace('.', ',')}`;
-      document.getElementById('txtFaltam').innerText = faltam > 0 ? `Faltam: R$ ${faltam.toFixed(2).replace('.', ',')}` : 'Quitado! 🎉';
-
-      renderizarPix(vComida, vComidaBebida);
-      salvarEstadoLocal();
-      renderizarHistorico();
-    }
-
     function renderizarPix(vComida, vComidaBebida) {
-      const chave = document.getElementById('chavePix').value;
+      const chave = document.getElementById('chavePix').value.trim();
       const nome = document.getElementById('nomePix').value || 'ORGANIZADOR';
       const valor = categoriaAtual === 'comida' ? vComida : vComidaBebida;
 
       document.getElementById('qrDescricao').innerText = `QR Code: ${categoriaAtual === 'comida' ? 'Só Comida' : 'Comida + Bebida'} (R$ ${valor.toFixed(2).replace('.', ',')})`;
-
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = '';
 
-      if (!chave.trim()) {
-        qrContainer.innerHTML = '<span style="font-size:0.8rem; color:#ea580c; font-weight:600;">👆 Digite uma Chave Pix no campo acima para exibir o QR Code</span>';
+      if (!chave) {
+        qrContainer.innerHTML = '<span style="font-size:0.8rem; color:#ea580c; font-weight:600;">👆 Digite uma Chave Pix acima para ver o QR Code</span>';
         payloadPixAtual = '';
         return;
       }
 
-      payloadPixAtual = gerarBRCode(chave, nome, valor);
+      const valStr = valor > 0 ? valor.toFixed(2) : '';
+      const cleanName = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 25).toUpperCase();
+      const merchant = emv('00', 'BR.GOV.BCB.PIX') + emv('01', chave);
+      let payload = emv('00', '01') + emv('26', merchant) + emv('52', '0000') + emv('53', '986') +
+                    (valStr ? emv('54', valStr) : '') + emv('58', 'BR') + emv('59', cleanName) +
+                    emv('60', 'BRASIL') + emv('62', emv('05', '***')) + '6304';
+      payloadPixAtual = payload + crc16(payload);
+
       if (typeof QRCode !== 'undefined') {
-        new QRCode(qrContainer, {
-          text: payloadPixAtual,
-          width: 150,
-          height: 150
-        });
-      } else {
-        qrContainer.innerHTML = '<span style="font-size:0.78rem; color:#64748b;">Código Pix pronto para copiar abaixo:</span>';
+        new QRCode(qrContainer, { text: payloadPixAtual, width: 150, height: 150 });
       }
     }
 
-    // Controle do Modal de Ajuda
-    const modalAjuda = document.getElementById('modalAjuda');
-    document.getElementById('btnAbrirAjuda').addEventListener('click', () => {
-      modalAjuda.classList.add('aberto');
-    });
-    document.getElementById('btnFecharAjuda').addEventListener('click', () => {
-      modalAjuda.classList.remove('aberto');
-    });
-    document.getElementById('btnEntendiAjuda').addEventListener('click', () => {
-      modalAjuda.classList.remove('aberto');
-    });
-    modalAjuda.addEventListener('click', (e) => {
-      if (e.target === modalAjuda) modalAjuda.classList.remove('aberto');
-    });
+    // Ações de Participantes
+    function adicionarParticipante() {
+      const input = document.getElementById('novoNome');
+      const tipo = document.getElementById('novoTipo').value;
+      const nome = input.value.trim();
+      if (!nome) { input.focus(); return; }
 
-    // Eventos Principais
-    document.getElementById('btnAddParticipante').addEventListener('click', adicionarParticipante);
-    document.getElementById('btnSalvarHistorico').addEventListener('click', salvarNoHistorico);
-    document.getElementById('btnNovoChurrasco').addEventListener('click', iniciarNovoChurrasco);
+      estado.participantes.push({ nome, tipo, pago: false });
+      input.value = '';
+      input.focus();
+      atualizarTudo();
+    }
 
-    document.getElementById('novoNome').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        adicionarParticipante();
+    window.alterarTipo = function(idx, novoTipo) {
+      estado.participantes[idx].tipo = novoTipo;
+      atualizarTudo();
+    };
+
+    window.alternarPago = function(idx) {
+      estado.participantes[idx].pago = !estado.participantes[idx].pago;
+      atualizarTudo();
+    };
+
+    window.removerParticipante = function(idx) {
+      estado.participantes.splice(idx, 1);
+      atualizarTudo();
+    };
+
+    // Histórico
+    function salvarHistorico() {
+      const reg = { ...estado, salvoEm: new Date().toLocaleString('pt-BR') };
+      const idx = historico.findIndex(h => h.id === estado.id);
+      if (idx >= 0) historico[idx] = reg;
+      else historico.unshift(reg);
+
+      localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico));
+      renderizarHistorico();
+      alert(`"${estado.titulo}" salvo no Histórico!`);
+    }
+
+    function novoChurrasco() {
+      if (estado.participantes.length > 0 && !confirm('Iniciar novo churrasco em branco?')) return;
+      estado = {
+        id: Date.now(),
+        titulo: 'Churrasco da Galera',
+        data: hojeISO(),
+        hora: horaAtualStr(),
+        gastoComida: 300,
+        gastoBebida: 180,
+        nomePix: document.getElementById('nomePix').value,
+        chavePix: document.getElementById('chavePix').value,
+        participantes: [],
+        modoHistorico: false
+      };
+      carregarDados();
+      atualizarTudo();
+    }
+
+    window.abrirHistorico = function(id) {
+      const enc = historico.find(h => h.id === id);
+      if (!enc) return;
+      estado = JSON.parse(JSON.stringify(enc));
+      estado.modoHistorico = true;
+      document.getElementById('titulo').value = estado.titulo;
+      document.getElementById('dataEvento').value = estado.data;
+      document.getElementById('horaEvento').value = estado.hora;
+      document.getElementById('gastoComida').value = estado.gastoComida;
+      document.getElementById('gastoBebida').value = estado.gastoBebida;
+      document.getElementById('nomePix').value = estado.nomePix;
+      document.getElementById('chavePix').value = estado.chavePix;
+      atualizarTudo();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.excluirHistorico = function(id) {
+      if (!confirm('Excluir este churrasco do histórico?')) return;
+      historico = historico.filter(h => h.id !== id);
+      localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico));
+      renderizarHistorico();
+    };
+
+    function renderizarHistorico() {
+      const cont = document.getElementById('historicoContainer');
+      cont.innerHTML = '';
+      if (historico.length === 0) {
+        cont.innerHTML = '<p style="font-size:0.85rem; color:#64748b; text-align:center;">Nenhum histórico salvo.</p>';
+        return;
       }
-    });
+      historico.forEach(h => {
+        const total = (parseFloat(h.gastoComida)||0) + (parseFloat(h.gastoBebida)||0);
+        const div = document.createElement('div');
+        div.className = 'item-historico';
+        div.innerHTML = `
+          <div class="info-historico">
+            <strong>🥩 ${h.titulo}</strong>
+            <span>📅 ${h.data.split('-').reverse().join('/')} • R$ ${total.toFixed(2).replace('.', ',')} • 👥 ${h.participantes.length} pessoas</span>
+          </div>
+          <div class="acoes-historico">
+            <button class="btn-hist-abrir" onclick="abrirHistorico(${h.id})">📂 Abrir</button>
+            <button class="btn-hist-del" onclick="excluirHistorico(${h.id})">🗑️</button>
+          </div>
+        `;
+        cont.appendChild(div);
+      });
+    }
 
-    document.getElementById('dataEvento').addEventListener('change', () => {
-      modoHistorico = false;
-      validarDataHora(true);
-      atualizarTudo();
-    });
-
-    document.getElementById('horaEvento').addEventListener('change', () => {
-      modoHistorico = false;
-      validarDataHora(true);
-      atualizarTudo();
-    });
+    // Event Listeners
+    document.getElementById('btnAddParticipante').addEventListener('click', adicionarParticipante);
+    document.getElementById('novoNome').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); adicionarParticipante(); } });
+    document.getElementById('btnSalvarHistorico').addEventListener('click', salvarHistorico);
+    document.getElementById('btnNovoChurrasco').addEventListener('click', novoChurrasco);
 
     document.getElementById('btnOptComida').addEventListener('click', () => {
       categoriaAtual = 'comida';
@@ -1249,48 +1001,28 @@
     });
 
     document.getElementById('btnCopiarPix').addEventListener('click', () => {
-      if (!payloadPixAtual) return alert('Digite uma chave Pix primeiro no campo "Chave Pix".');
-      navigator.clipboard.writeText(payloadPixAtual).then(() => {
-        alert('Código Pix Copia e Cola copiado!');
-      });
+      if (!payloadPixAtual) return alert('Digite uma Chave Pix válida primeiro.');
+      navigator.clipboard.writeText(payloadPixAtual).then(() => alert('Pix Copia e Cola copiado!'));
     });
 
     document.getElementById('btnEnviarWhats').addEventListener('click', () => {
-      const titulo = document.getElementById('titulo').value || 'Churrasco';
-      const rawData = document.getElementById('dataEvento').value;
-      const hora = document.getElementById('horaEvento').value;
-      const chave = document.getElementById('chavePix').value;
-      const vComida = document.getElementById('valSoComida').innerText;
-      const vBebida = document.getElementById('valComidaBebida').innerText;
-
-      const dataFmt = rawData ? `${formatarDataBR(rawData)} às ${hora}` : 'A definir';
-
-      const listaStr = participantes.length > 0
-        ? participantes.map(p => `- ${p.nome} (${p.tipo}): ${p.pago ? '[PAGO ✅]' : '[PENDENTE]'}`).join('\n')
-        : 'Nenhum participante na lista ainda.';
-
-      const msg = 
-`🥩 *${titulo}*
-📅 *Data:* ${dataFmt}
-
-📊 *Valores do Rateio:*
-🍽️ *Só Comida:* ${vComida}
-🍻 *Comida + Bebida:* ${vBebida}
-
-👥 *Participantes:*
-${listaStr}
-${chave ? `\n💳 *Chave Pix:* ${chave}` : ''}
-
-Favor enviar o comprovante para darmos baixa! 🔥`;
-
+      const listaStr = estado.participantes.map(p => `- ${p.nome} (${p.tipo}): ${p.pago ? 'PAGO ✅' : 'PENDENTE'}`).join('\n');
+      const msg = `🥩 *${estado.titulo}* (%0A)📅 Data: ${estado.data.split('-').reverse().join('/')} às ${estado.hora}\n\n👥 *Participantes:*\n${listaStr}\n\n${estado.chavePix ? '💳 Chave Pix: ' + estado.chavePix : ''}`;
       window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     });
 
-    ['titulo', 'gastoComida', 'gastoBebida', 'chavePix', 'nomePix'].forEach(id => {
+    // Modais e inputs gerais
+    document.getElementById('btnAbrirAjuda').addEventListener('click', () => document.getElementById('modalAjuda').classList.add('aberto'));
+    document.getElementById('btnFecharAjuda').addEventListener('click', () => document.getElementById('modalAjuda').classList.remove('aberto'));
+    document.getElementById('modalAjuda').addEventListener('click', e => { if (e.target.id === 'modalAjuda') e.target.classList.remove('aberto'); });
+
+    ['titulo', 'dataEvento', 'horaEvento', 'gastoComida', 'gastoBebida', 'nomePix', 'chavePix'].forEach(id => {
       document.getElementById(id).addEventListener('input', atualizarTudo);
+      document.getElementById(id).addEventListener('change', atualizarTudo);
     });
 
-    carregarEstadoLocal();
+    // Inicialização
+    carregarDados();
     atualizarTudo();
   </script>
 </body>
