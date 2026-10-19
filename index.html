@@ -4,21 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   
-  <!-- 1. SEO Principal -->
   <title>Churrascômetro & Pix | Calculadora de Rateio de Churrasco</title>
   <meta name="description" content="Organize seu churrasco sem dor de cabeça. Calcule o rateio justo separando quem só come de quem bebe, controle a lista de presença e gere o QR Code Pix na hora." />
   <meta name="keywords" content="rateio de churrasco, calculadora de churrasco, churrascômetro, dividir conta churrasco, qr code pix churrasco, organizar churrasco" />
   <meta name="author" content="RevLevih" />
   <meta name="robots" content="index, follow" />
 
-  <!-- 2. Open Graph / WhatsApp -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="🥩 Churrascômetro & Rateio Pix" />
   <meta property="og:description" content="Calcule o rateio proporcional (Só Comida vs. Comida + Bebida), acompanhe quem já pagou e gere o QR Code Pix instantaneamente." />
   <meta property="og:image" content="icon.png" />
   <meta property="og:locale" content="pt_BR" />
 
-  <!-- 3. PWA / Mobile -->
   <meta name="theme-color" content="#ea580c" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -70,11 +67,6 @@
       border-radius: var(--radius);
       padding: 18px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-    }
-
-    .card-destaque {
-      background: #fff7ed;
-      border-color: #ffedd5;
     }
 
     .header-brand {
@@ -294,13 +286,42 @@
       padding: 4px;
     }
 
+    /* Aba Colapsável de Sugestão de Carnes */
+    details.card-calculadora {
+      background: #fff7ed;
+      border-color: #ffedd5;
+    }
+
+    details.card-calculadora summary {
+      font-weight: 700;
+      font-size: 1.05rem;
+      cursor: pointer;
+      color: var(--primary);
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    details.card-calculadora summary::after {
+      content: "▼";
+      font-size: 0.75rem;
+    }
+
+    details.card-calculadora[open] summary::after {
+      content: "▲";
+    }
+
     .sugestao-lista {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       font-size: 0.88rem;
       color: var(--text);
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #fed7aa;
     }
 
     .cards-rateio {
@@ -642,16 +663,16 @@
       <div id="listaContainer" class="lista-participantes"></div>
     </div>
 
-    <!-- Bloco 2.1: Sugestão Automática de Carnes e Bebidas -->
-    <div class="card card-destaque">
-      <h2>🥩 Sugestão de Compras</h2>
-      <p class="subtitle">Cálculo automático baseado nos <span id="txtQtdPessoas">0</span> convidados confirmados:</p>
+    <!-- Bloco 2.1: Aba Colapsável de Sugestão de Carnes e Bebidas -->
+    <details class="card card-calculadora">
+      <summary>🥩 Sugestão Automática de Compras</summary>
       <ul class="sugestao-lista">
-        <li>🥩 <strong>Carne Total (Bovina/Frango/Linguiça):</strong> <span id="sugestaoCarne">0.0 kg</span></li>
-        <li>🍻 <strong>Cerveja:</strong> <span id="sugestaoCerveja">0.0 Litros</span> (para quem consome bebida)</li>
+        <li>👥 <strong>Convidados na lista:</strong> <span id="txtQtdPessoas">0</span> pessoas</li>
+        <li>🥩 <strong>Carne Total Sugerida:</strong> <span id="sugestaoCarne">0.0 kg</span> (aprox. 450g / pessoa)</li>
+        <li>🍻 <strong>Cerveja Sugerida:</strong> <span id="sugestaoCerveja">0.0 Litros</span> (para quem bebe)</li>
         <li>🥤 <strong>Refrigerante / Água:</strong> <span id="sugestaoRefri">0.0 Litros</span></li>
       </ul>
-    </div>
+    </details>
 
     <!-- Bloco 3: Rateio e Pix -->
     <div class="card">
@@ -754,21 +775,13 @@
       <div class="passo-ajuda">
         <div class="passo-numero">3</div>
         <div class="passo-texto">
-          <strong>Acompanhe as Sugestões de Compra</strong>
-          <span>Veja automaticamente a quantidade ideal de carne e bebidas recomendada para o total de pessoas cadastradas.</span>
-        </div>
-      </div>
-
-      <div class="passo-ajuda">
-        <div class="passo-numero">4</div>
-        <div class="passo-texto">
           <strong>Controle quem já pagou</strong>
           <span>Conforme o pessoal for pagando, marque a caixinha ✅ ao lado do nome. O app soma o total arrecadado e mostra quanto ainda falta.</span>
         </div>
       </div>
 
       <div class="passo-ajuda">
-        <div class="passo-numero">5</div>
+        <div class="passo-numero">4</div>
         <div class="passo-texto">
           <strong>Cobre com Pix ou WhatsApp</strong>
           <span>Preencha sua Chave Pix para exibir o QR Code na tela ou toque no botão verde para enviar o resumo completo no grupo do WhatsApp!</span>
@@ -780,8 +793,8 @@
   </div>
 
   <script>
-    const STORAGE_ATUAL = 'churrasco_app_estado_atual_v2';
-    const STORAGE_HISTORICO = 'churrasco_app_historico_v2';
+    const STORAGE_ATUAL = 'churrasco_app_estado_atual_v3';
+    const STORAGE_HISTORICO = 'churrasco_app_historico_v3';
 
     let idEventoAtual = null;
     let participantes = [];
@@ -1245,4 +1258,40 @@
     document.getElementById('btnEnviarWhats').addEventListener('click', () => {
       const titulo = document.getElementById('titulo').value || 'Churrasco';
       const rawData = document.getElementById('dataEvento').value;
-      const hora = document.getElementById('hora
+      const hora = document.getElementById('horaEvento').value;
+      const chave = document.getElementById('chavePix').value;
+      const vComida = document.getElementById('valSoComida').innerText;
+      const vBebida = document.getElementById('valComidaBebida').innerText;
+
+      const dataFmt = rawData ? `${formatarDataBR(rawData)} às ${hora}` : 'A definir';
+
+      const listaStr = participantes.length > 0
+        ? participantes.map(p => `- ${p.nome} (${p.tipo}): ${p.pago ? '[PAGO ✅]' : '[PENDENTE]'}`).join('\n')
+        : 'Nenhum participante na lista ainda.';
+
+      const msg = 
+`🥩 *${titulo}*
+📅 *Data:* ${dataFmt}
+
+📊 *Valores do Rateio:*
+🍽️ *Só Comida:* ${vComida}
+🍻 *Comida + Bebida:* ${vBebida}
+
+👥 *Participantes:*
+${listaStr}
+${chave ? `\n💳 *Chave Pix:* ${chave}` : ''}
+
+Favor enviar o comprovante para darmos baixa! 🔥`;
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    });
+
+    ['titulo', 'gastoComida', 'gastoBebida', 'chavePix', 'nomePix'].forEach(id => {
+      document.getElementById(id).addEventListener('input', atualizarTudo);
+    });
+
+    carregarEstadoLocal();
+    atualizarTudo();
+  </script>
+</body>
+</html>
