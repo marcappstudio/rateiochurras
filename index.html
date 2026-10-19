@@ -3,385 +3,267 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  
-  <title>Churrascômetro & Pix</title>
+  <title>Churrascômetro & Pix v6.0</title>
   <meta name="theme-color" content="#ea580c" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="icon.png" />
   <link rel="apple-touch-icon" href="icon.png" />
-
-  <!-- Biblioteca QR Code -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     :root {
       --primary: #ea580c;
-      --primary-hover: #c2410c;
       --bg: #f8fafc;
-      --card-bg: #ffffff;
+      --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
       --border: #e2e8f0;
-      --radius: 14px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 14px 10px 40px; }
+    .container { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 12px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .header-left { display: flex; align-items: center; gap: 8px; }
+    .header-left img { width: 36px; height: 36px; border-radius: 8px; }
+    h1 { font-size: 1.2rem; color: var(--primary); }
+    h2 { font-size: 1.02rem; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .badge { font-size: 0.72rem; background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 99px; font-weight: 700; }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      padding: 20px 12px 50px;
-    }
+    /* Navegação por Abas */
+    .tabs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; background: #e2e8f0; padding: 4px; border-radius: 10px; }
+    .tab-btn { border: none; background: transparent; padding: 9px 4px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; color: var(--text); cursor: pointer; }
+    .tab-btn.active { background: #ffffff; color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .aba-conteudo { display: none; flex-direction: column; gap: 12px; }
+    .aba-conteudo.ativa { display: flex; }
 
-    .container {
-      width: 100%;
-      max-width: 540px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .top-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .btn-topo { padding: 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: #f8fafc; }
+    .btn-topo.escuro { background: #0f172a; color: #fff; border-color: #0f172a; }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .full { grid-column: span 2; }
+    label { font-size: 0.78rem; font-weight: 600; display: block; margin-bottom: 3px; }
+    input, select { width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; background: #fff; }
+    .aviso-erro { grid-column: span 2; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 600; display: none; }
 
-    .header-brand {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
+    .add-form { display: grid; grid-template-columns: 1.3fr 1.1fr auto; gap: 6px; margin-bottom: 12px; }
+    .btn-add { background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 0 14px; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
 
-    .header-left { display: flex; align-items: center; gap: 10px; }
-    .header-brand img { width: 40px; height: 40px; border-radius: 10px; }
-    
-    .badge-salvo {
-      font-size: 0.7rem;
-      background: #dcfce7;
-      color: #15803d;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-weight: 600;
-    }
+    .lista { display: flex; flex-direction: column; gap: 6px; }
+    .item-part { display: grid; grid-template-columns: auto 1fr auto auto auto; align-items: center; gap: 6px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: #fafafa; font-size: 0.86rem; }
+    .item-part.pago { background: #f0fdf4; border-color: #bbf7d0; }
+    .item-part input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+    .item-part select { padding: 4px; font-size: 0.78rem; width: auto; }
+    .valor-tag { font-weight: 700; font-size: 0.82rem; min-width: 68px; text-align: right; }
+    .btn-del { background: none; border: none; cursor: pointer; font-size: 0.95rem; padding: 2px 4px; }
 
-    .btn-ajuda-topo {
-      background: #fff7ed;
-      color: var(--primary);
-      border: 1px solid #fed7aa;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
+    .cards-rateio { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+    .card-opt { border: 2px solid var(--border); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; background: #fafafa; }
+    .card-opt.active { border-color: var(--primary); background: #fff7ed; }
+    .card-opt span { display: block; font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+    .card-opt strong { font-size: 1.15rem; }
 
-    h1 { font-size: 1.25rem; color: var(--primary); }
-    h2 { font-size: 1.05rem; margin-bottom: 12px; color: var(--text); }
-    p.subtitle { font-size: 0.84rem; color: var(--muted); margin-bottom: 14px; }
+    .balanco { margin-top: 10px; padding: 9px 12px; background: #f1f5f9; border-radius: 8px; display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; }
+    .qr-box { margin-top: 12px; background: #fafafa; border: 1px dashed var(--border); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+    #qrcode { background: #fff; padding: 10px; border-radius: 8px; min-height: 160px; min-width: 160px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    .btn-escuro { background: #1e293b; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+    .btn-whats { margin-top: 10px; width: 100%; background: #25d366; color: #fff; border: none; border-radius: 10px; padding: 11px; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
 
-    .top-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .btn-acao-topo {
-      padding: 9px 12px;
-      border-radius: 8px;
-      font-size: 0.83rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: #f8fafc;
-      color: var(--text);
-    }
-
-    .btn-acao-topo.salvar { background: #0f172a; color: #ffffff; border-color: #0f172a; }
-
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .full-width { grid-column: span 2; }
-    .field { display: flex; flex-direction: column; gap: 4px; }
-
-    label { font-size: 0.8rem; font-weight: 600; color: var(--text); }
-    input, select {
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.92rem;
-      outline: none;
-      background: #fff;
-      width: 100%;
-    }
-    input:focus, select:focus { border-color: var(--primary); }
-
-    .aviso-data {
-      grid-column: span 2;
-      font-size: 0.78rem;
-      color: #b91c1c;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      padding: 8px;
-      border-radius: 8px;
-      display: none;
-      font-weight: 600;
-    }
-
-    .add-row {
-      display: grid;
-      grid-template-columns: 1.4fr 1.2fr auto;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .btn-add {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 0 16px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .lista-participantes { display: flex; flex-direction: column; gap: 8px; }
-
-    .item-participante {
-      display: grid;
-      grid-template-columns: auto 1fr auto auto auto;
-      align-items: center;
-      gap: 8px;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: #fafafa;
-      font-size: 0.9rem;
-    }
-
-    .item-participante input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
-    .item-participante.pago { background: #f0fdf4; border-color: #bbf7d0; }
-    .item-participante select { padding: 6px; font-size: 0.82rem; width: auto; }
-
-    .valor-tag { font-weight: 700; font-size: 0.85rem; min-width: 75px; text-align: right; }
-    .btn-del { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 4px; }
-
-    details.card-calculadora { background: #fff7ed; border-color: #ffedd5; }
-    details.card-calculadora summary { font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--primary); list-style: none; }
-    .sugestao-lista { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem; margin-top: 10px; padding-top: 10px; border-top: 1px solid #fed7aa; }
-
-    .cards-rateio { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
-    .card-opcao {
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      text-align: center;
-      cursor: pointer;
-      background: #fafafa;
-    }
-    .card-opcao.active { border-color: var(--primary); background: #fff7ed; }
-    .card-opcao span { display: block; font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
-    .card-opcao strong { font-size: 1.25rem; color: var(--text); }
-
-    .balanco-bar {
-      margin-top: 12px;
-      padding: 10px 12px;
-      background: #f1f5f9;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
-    .qr-box {
-      margin-top: 16px;
-      background: #fafafa;
-      border: 1px dashed var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      text-align: center;
-    }
-
-    #qrcode {
-      background: #ffffff;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      min-height: 150px;
-      min-width: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-copia-cola { background: #1e293b; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
-    .btn-whats { margin-top: 14px; width: 100%; background: #25d366; color: white; border: none; border-radius: 10px; padding: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; }
-
-    .lista-historico { display: flex; flex-direction: column; gap: 8px; }
-    .item-historico { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: #fafafa; gap: 8px; }
-    .info-historico strong { display: block; font-size: 0.9rem; }
-    .info-historico span { font-size: 0.75rem; color: var(--muted); }
-    .acoes-historico { display: flex; gap: 6px; }
-    .btn-hist-abrir { background: var(--primary); color: #fff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.75rem; cursor: pointer; }
-    .btn-hist-del { background: #fee2e2; color: #b91c1c; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.75rem; cursor: pointer; }
-
-    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 999; }
-    .modal-overlay.aberto { display: flex; }
-    .modal-box { background: #fff; width: 100%; max-width: 440px; border-radius: 14px; padding: 18px; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .btn-fechar-modal { background: #f1f5f9; border: none; border-radius: 6px; padding: 4px 8px; font-weight: 700; cursor: pointer; }
+    /* Aba Calculadora de Carnes */
+    .calc-box { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 12px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .calc-linha { display: flex; justify-content: space-between; align-items: center; font-size: 0.92rem; padding: 6px 0; border-bottom: 1px dashed #fed7aa; }
+    .calc-linha:last-child { border-bottom: none; }
+    .item-hist { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: #fafafa; margin-bottom: 8px; font-size: 0.85rem; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="card">
-      <div class="header-brand">
+    <!-- Cabeçalho e Abas -->
+    <div class="card" style="padding: 12px 16px;">
+      <div class="header">
         <div class="header-left">
-          <img src="icon.png" alt="Ícone" onerror="this.style.display='none'" />
-          <h1>Churrascômetro</h1>
+          <img src="icon.png" alt="Logo" onerror="this.style.display='none'" />
+          <h1>Churrascômetro & Pix</h1>
         </div>
-        <div class="header-right">
-          <span class="badge-salvo" id="badgeSalvo">✓ Salvo</span>
-          <button type="button" class="btn-ajuda-topo" id="btnAbrirAjuda">❓ Ajuda</button>
-        </div>
-      </div>
-      <p class="subtitle">Calculadora e rateio inteligente com Pix.</p>
-
-      <div class="top-actions">
-        <button type="button" class="btn-acao-topo salvar" id="btnSalvarHistorico">💾 Salvar Histórico</button>
-        <button type="button" class="btn-acao-topo" id="btnNovoChurrasco">✨ Novo Churrasco</button>
+        <span class="badge" id="badgeStatus">⏳ Carregando...</span>
       </div>
 
-      <div class="grid">
-        <div class="field full-width">
-          <label>Nome do Evento</label>
-          <input type="text" id="titulo" value="Churrasco da Galera" />
+      <div class="tabs">
+        <button type="button" class="tab-btn active" id="tabBtnRateio" onclick="trocarAba('rateio')">📋 Rateio & Pix</button>
+        <button type="button" class="tab-btn" id="tabBtnCarnes" onclick="trocarAba('carnes')">🥩 Calc. Carnes</button>
+        <button type="button" class="tab-btn" id="tabBtnHist" onclick="trocarAba('hist')">📚 Histórico</button>
+      </div>
+    </div>
+
+    <!-- ABA 1: RATEIO E PIX -->
+    <div id="abaRateio" class="aba-conteudo ativa">
+      <div class="card">
+        <div class="top-actions">
+          <button type="button" class="btn-topo escuro" onclick="salvarNoHistorico()">💾 Salvar no Histórico</button>
+          <button type="button" class="btn-topo" onclick="novoChurrasco()">✨ Novo Churrasco</button>
         </div>
-        <div class="field">
-          <label>Data</label>
-          <input type="date" id="dataEvento" />
+
+        <div class="grid">
+          <div class="full">
+            <label>Nome do Evento</label>
+            <input type="text" id="titulo" value="Churrasco da Galera" oninput="salvarEAtualizar()" />
+          </div>
+          <div>
+            <label>Data (Hoje em diante)</label>
+            <input type="date" id="dataEvento" onchange="verificarDataHora(true)" />
+          </div>
+          <div>
+            <label>Horário</label>
+            <input type="time" id="horaEvento" onchange="verificarDataHora(true)" />
+          </div>
+          <div id="avisoDataHora" class="aviso-erro">
+            ⚠️ Não é permitido agendar no passado! Ajustamos para a data/hora atual.
+          </div>
+          <div>
+            <label>Total Comida (R$)</label>
+            <input type="number" id="gastoComida" min="0" step="10" value="300" oninput="salvarEAtualizar()" />
+          </div>
+          <div>
+            <label>Total Bebida (R$)</label>
+            <input type="number" id="gastoBebida" min="0" step="10" value="180" oninput="salvarEAtualizar()" />
+          </div>
         </div>
-        <div class="field">
-          <label>Horário</label>
-          <input type="time" id="horaEvento" />
+      </div>
+
+      <div class="card">
+        <h2>
+          <span>👥 Participantes</span>
+          <span id="contadorPart" style="font-size:0.8rem; color:var(--primary);">0 pessoas</span>
+        </h2>
+
+        <form class="add-form" onsubmit="adicionarParticipante(event)">
+          <input type="text" id="novoNome" placeholder="Nome do convidado" />
+          <select id="novoTipo">
+            <option value="Comida + Bebida">Comida + Bebida</option>
+            <option value="Só Comida">Só Comida</option>
+          </select>
+          <button type="submit" class="btn-add">➕</button>
+        </form>
+
+        <div id="listaContainer" class="lista"></div>
+      </div>
+
+      <div class="card">
+        <h2>📊 Rateio e QR Code Pix</h2>
+        <div class="grid" style="margin-bottom: 10px;">
+          <div>
+            <label>Recebedor</label>
+            <input type="text" id="nomePix" value="ORGANIZADOR" maxlength="25" oninput="salvarEAtualizar()" />
+          </div>
+          <div>
+            <label>Chave Pix</label>
+            <input type="text" id="chavePix" placeholder="CPF, Celular, Email..." oninput="salvarEAtualizar()" />
+          </div>
         </div>
-        <div id="avisoDataHora" class="aviso-data">
-          ⚠️ Data ou horário no passado ajustados para o atual.
+
+        <p style="font-size: 0.78rem; color: var(--muted);">Toque na cota desejada para mudar o QR Code:</p>
+        <div class="cards-rateio">
+          <div class="card-opt active" id="cardOptComida" onclick="selecionarCota('comida')">
+            <span>🍽️ Só Comida</span>
+            <strong id="valSoComida">R$ 0,00</strong>
+          </div>
+          <div class="card-opt" id="cardOptBebida" onclick="selecionarCota('bebida')">
+            <span>🍻 Comida + Bebida</span>
+            <strong id="valComidaBebida">R$ 0,00</strong>
+          </div>
         </div>
-        <div class="field">
-          <label>Total Comida (R$)</label>
-          <input type="number" id="gastoComida" min="0" step="10" value="300" />
+
+        <div class="balanco">
+          <span id="txtArrecadado">Arrecadado: R$ 0,00</span>
+          <span id="txtFaltam" style="color: var(--primary);">Faltam: R$ 0,00</span>
         </div>
-        <div class="field">
-          <label>Total Bebida (R$)</label>
-          <input type="number" id="gastoBebida" min="0" step="10" value="180" />
+
+        <div class="qr-box">
+          <span id="qrDescricao" style="font-size: 0.82rem; font-weight: 700;">QR Code Pix</span>
+          <div id="qrcode"></div>
+          <button type="button" class="btn-escuro" onclick="copiarPix()">📋 Copiar Pix Copia e Cola</button>
+        </div>
+
+        <button type="button" class="btn-whats" onclick="compartilharWhats()">📲 Enviar Lista no WhatsApp</button>
+      </div>
+    </div>
+
+    <!-- ABA 2: CALCULADORA DE CARNES E BEBIDAS -->
+    <div id="abaCarnes" class="aba-conteudo">
+      <div class="card">
+        <h2>🥩 Calculadora de Carnes e Bebidas</h2>
+        <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 12px;">
+          Os números abaixo puxam automaticamente da sua lista de participantes, mas você também pode alterar manualmente para simular:
+        </p>
+
+        <div class="grid">
+          <div>
+            <label>Total de Pessoas (Comem)</label>
+            <input type="number" id="simPessoas" min="0" value="0" oninput="calcularInsumosManual()" />
+          </div>
+          <div>
+            <label>Quantos Bebem Cerveja</label>
+            <input type="number" id="simBebem" min="0" value="0" oninput="calcularInsumosManual()" />
+          </div>
+        </div>
+
+        <div class="calc-box">
+          <div class="calc-linha">
+            <span>🥩 <strong>Carne Bovina / Assados</strong> (300g/pessoa)</span>
+            <strong id="calcBovina">0,0 kg</strong>
+          </div>
+          <div class="calc-linha">
+            <span>🌭 <strong>Linguiça / Frango</strong> (150g/pessoa)</span>
+            <strong id="calcLinguica">0,0 kg</strong>
+          </div>
+          <div class="calc-linha" style="color: var(--primary); font-size: 1rem;">
+            <span>🔥 <strong>TOTAL DE CARNES:</strong></span>
+            <strong id="calcCarneTotal">0,0 kg</strong>
+          </div>
+          <div class="calc-linha">
+            <span>🍻 <strong>Cerveja Sugerida</strong> (3,5 L por bebedor)</span>
+            <strong id="calcCerveja">0,0 L (0 latas)</strong>
+          </div>
+          <div class="calc-linha">
+            <span>🥤 <strong>Refrigerante / Água</strong> (600ml/pessoa)</span>
+            <strong id="calcRefri">0,0 L</strong>
+          </div>
+          <div class="calc-linha">
+            <span>🪨 <strong>Carvão Estimado</strong> (1 kg a cada 1,5 kg carne)</span>
+            <strong id="calcCarvao">0,0 kg</strong>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>👥 Participantes</h2>
-      <div class="add-row">
-        <input type="text" id="novoNome" placeholder="Nome do convidado" />
-        <select id="novoTipo">
-          <option value="Comida + Bebida">Comida + Bebida</option>
-          <option value="Só Comida">Só Comida</option>
-        </select>
-        <button type="button" class="btn-add" id="btnAddParticipante">➕</button>
-      </div>
-      <div id="listaContainer" class="lista-participantes"></div>
-    </div>
-
-    <details class="card card-calculadora">
-      <summary>🥩 Sugestão de Compras (Carnes e Bebidas)</summary>
-      <ul class="sugestao-lista">
-        <li>👥 <strong>Pessoas:</strong> <span id="txtQtdPessoas">0</span></li>
-        <li>🥩 <strong>Carne:</strong> <span id="sugestaoCarne">0.0 kg</span> (450g / pessoa)</li>
-        <li>🍻 <strong>Cerveja:</strong> <span id="sugestaoCerveja">0.0 L</span></li>
-        <li>🥤 <strong>Refris / Água:</strong> <span id="sugestaoRefri">0.0 L</span></li>
-      </ul>
-    </details>
-
-    <div class="card">
-      <h2>📊 Rateio e Pix</h2>
-
-      <div class="grid" style="margin-bottom: 12px;">
-        <div class="field">
-          <label>Recebedor</label>
-          <input type="text" id="nomePix" value="ORGANIZADOR" maxlength="25" />
-        </div>
-        <div class="field">
-          <label>Chave Pix</label>
-          <input type="text" id="chavePix" placeholder="CPF, Celular ou Email" />
-        </div>
+    <!-- ABA 3: HISTÓRICO E AJUDA -->
+    <div id="abaHist" class="aba-conteudo">
+      <div class="card">
+        <h2>📚 Histórico de Churrascos Salvos</h2>
+        <div id="historicoContainer"></div>
       </div>
 
-      <p style="font-size: 0.8rem; color: var(--muted);">Toque na cota para gerar o QR Code:</p>
-      <div class="cards-rateio">
-        <div class="card-opcao active" id="btnOptComida">
-          <span>🍽️ Só Comida</span>
-          <strong id="valSoComida">R$ 0,00</strong>
-        </div>
-        <div class="card-opcao" id="btnOptBebida">
-          <span>🍻 Comida + Bebida</span>
-          <strong id="valComidaBebida">R$ 0,00</strong>
-        </div>
+      <div class="card">
+        <h2>❓ Como Usar o Aplicativo</h2>
+        <p style="font-size: 0.84rem; color: var(--muted); line-height: 1.55;">
+          <strong>1. Data e Hora:</strong> O app bloqueia datas ou horários passados automaticamente.<br>
+          <strong>2. Participantes:</strong> Digite o nome na Aba 1 e aperte ➕. Tudo fica salvo sozinho no celular.<br>
+          <strong>3. Calculadora de Carnes:</strong> Toque na aba "🥩 Calc. Carnes" lá no topo para ver os quilos de carne, linguiça, carvão e bebidas.<br>
+          <strong>4. QR Code Pix:</strong> Basta preencher o campo "Chave Pix" que o QR Code aparece na hora!
+        </p>
       </div>
-
-      <div class="balanco-bar">
-        <span id="txtArrecadado">Arrecadado: R$ 0,00</span>
-        <span id="txtFaltam" style="color: var(--primary);">Faltam: R$ 0,00</span>
-      </div>
-
-      <div class="qr-box">
-        <span id="qrDescricao" style="font-size: 0.85rem; font-weight: 600;">QR Code Pix</span>
-        <div id="qrcode"></div>
-        <button type="button" class="btn-copia-cola" id="btnCopiarPix">📋 Copiar Pix Copia e Cola</button>
-      </div>
-
-      <button type="button" class="btn-whats" id="btnEnviarWhats">📲 Compartilhar no WhatsApp</button>
-    </div>
-
-    <div class="card">
-      <h2>📚 Histórico</h2>
-      <div id="historicoContainer" class="lista-historico"></div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="modalAjuda">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3>🥩 Como usar</h3>
-        <button type="button" class="btn-fechar-modal" id="btnFecharAjuda">✕</button>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5;">
-        1. A data não aceita dias passados.<br>
-        2. Digite o nome do convidado e clique em ➕ ou Enter.<br>
-        3. Digite sua chave Pix para gerar o QR Code instantaneamente.
-      </p>
     </div>
   </div>
 
   <script>
-    const STORAGE_KEY = 'churrasco_app_v5';
-    const HISTORICO_KEY = 'churrasco_app_hist_v5';
+    const CHAVE_STORAGE = 'churrasco_v6_atual';
+    const CHAVE_HIST = 'churrasco_v6_historico';
 
-    let appState = {
+    let dados = {
       id: Date.now(),
       titulo: 'Churrasco da Galera',
       data: '',
@@ -393,164 +275,141 @@
       participantes: []
     };
 
-    let historico = [];
-    let categoriaAtual = 'comida';
-    let qrCodeInstance = null;
+    let listaHistorico = [];
+    let cotaSelecionada = 'comida';
+    let codigoPixCopiaCola = '';
 
-    function hojeISO() {
+    function obterHojeISO() {
       const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     }
 
-    function horaAtualStr() {
+    function obterHoraAgora() {
       const d = new Date();
-      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
     }
 
-    function initApp() {
-      try {
-        const histRaw = localStorage.getItem(HISTORICO_KEY);
-        if (histRaw) historico = JSON.parse(histRaw);
+    window.trocarAba = function(aba) {
+      document.getElementById('abaRateio').classList.toggle('ativa', aba === 'rateio');
+      document.getElementById('abaCarnes').classList.toggle('ativa', aba === 'carnes');
+      document.getElementById('abaHist').classList.toggle('ativa', aba === 'hist');
 
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          appState = JSON.parse(saved);
-        } else {
-          appState.data = hojeISO();
-          appState.hora = horaAtualStr();
-        }
-      } catch (e) {
-        appState.data = hojeISO();
-        appState.hora = horaAtualStr();
+      document.getElementById('tabBtnRateio').classList.toggle('active', aba === 'rateio');
+      document.getElementById('tabBtnCarnes').classList.toggle('active', aba === 'carnes');
+      document.getElementById('tabBtnHist').classList.toggle('active', aba === 'hist');
+    };
+
+    // Bloqueio rigoroso de data e hora no passado
+    window.verificarDataHora = function(mostrarAlerta) {
+      const elData = document.getElementById('dataEvento');
+      const elHora = document.getElementById('horaEvento');
+      const elAviso = document.getElementById('avisoDataHora');
+
+      const hoje = obterHojeISO();
+      const horaAgora = obterHoraAgora();
+      elData.min = hoje;
+
+      let bloqueou = false;
+
+      if (!elData.value || elData.value < hoje) {
+        elData.value = hoje;
+        bloqueou = true;
       }
 
-      document.getElementById('titulo').value = appState.titulo || 'Churrasco da Galera';
-      document.getElementById('dataEvento').value = appState.data || hojeISO();
-      document.getElementById('horaEvento').value = appState.hora || horaAtualStr();
-      document.getElementById('gastoComida').value = appState.gastoComida ?? 300;
-      document.getElementById('gastoBebida').value = appState.gastoBebida ?? 180;
-      document.getElementById('nomePix').value = appState.nomePix || 'ORGANIZADOR';
-      document.getElementById('chavePix').value = appState.chavePix || '';
-
-      validarDataHora(false);
-      atualizarTudo();
-    }
-
-    function salvarLocal() {
-      appState.titulo = document.getElementById('titulo').value;
-      appState.data = document.getElementById('dataEvento').value;
-      appState.hora = document.getElementById('horaEvento').value;
-      appState.gastoComida = document.getElementById('gastoComida').value;
-      appState.gastoBebida = document.getElementById('gastoBebida').value;
-      appState.nomePix = document.getElementById('nomePix').value;
-      appState.chavePix = document.getElementById('chavePix').value;
-
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-      } catch (e) {}
-    }
-
-    function validarDataHora(avisoVisual = true) {
-      const inputData = document.getElementById('dataEvento');
-      const inputHora = document.getElementById('horaEvento');
-      const aviso = document.getElementById('avisoDataHora');
-
-      const hj = hojeISO();
-      const hr = horaAtualStr();
-
-      inputData.min = hj;
-
-      let alterou = false;
-      if (!inputData.value || inputData.value < hj) {
-        inputData.value = hj;
-        alterou = true;
-      }
-
-      if (inputData.value === hj) {
-        inputHora.min = hr;
-        if (!inputHora.value || inputHora.value < hr) {
-          inputHora.value = hr;
-          alterou = true;
+      if (elData.value === hoje) {
+        elHora.min = horaAgora;
+        if (!elHora.value || elHora.value < horaAgora) {
+          elHora.value = horaAgora;
+          bloqueou = true;
         }
       } else {
-        inputHora.removeAttribute('min');
+        elHora.removeAttribute('min');
       }
 
-      if (alterou && avisoVisual) {
-        aviso.style.display = 'block';
-        setTimeout(() => { aviso.style.display = 'none'; }, 4000);
-      }
-    }
-
-    function atualizarTudo() {
-      validarDataHora(true);
-      salvarLocal();
-
-      const cComida = parseFloat(appState.gastoComida) || 0;
-      const cBebida = parseFloat(appState.gastoBebida) || 0;
-
-      const qtdPessoas = appState.participantes.length;
-      const qtdBebem = appState.participantes.filter(p => p.tipo === 'Comida + Bebida').length;
-
-      // Insumos
-      document.getElementById('txtQtdPessoas').innerText = qtdPessoas;
-      document.getElementById('sugestaoCarne').innerText = `${(qtdPessoas * 0.45).toFixed(1).replace('.', ',')} kg`;
-      document.getElementById('sugestaoCerveja').innerText = `${(qtdBebem * 3.5).toFixed(1).replace('.', ',')} L`;
-      document.getElementById('sugestaoRefri').innerText = `${(qtdPessoas * 0.6).toFixed(1).replace('.', ',')} L`;
-
-      // Rateio
-      const cotaComida = qtdPessoas > 0 ? (cComida / qtdPessoas) : 0;
-      const cotaBebida = qtdBebem > 0 ? (cBebida / qtdBebem) : 0;
-      const vSoComida = cotaComida;
-      const vComidaBebida = cotaComida + cotaBebida;
-
-      document.getElementById('valSoComida').innerText = `R$ ${vSoComida.toFixed(2).replace('.', ',')}`;
-      document.getElementById('valComidaBebida').innerText = `R$ ${vComidaBebida.toFixed(2).replace('.', ',')}`;
-
-      // Renderizar Lista
-      const container = document.getElementById('listaContainer');
-      container.innerHTML = '';
-
-      if (appState.participantes.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:#64748b; text-align:center; padding:8px;">Nenhum participante ainda.</p>';
-      } else {
-        appState.participantes.forEach((p, idx) => {
-          const valorDevido = p.tipo === 'Só Comida' ? vSoComida : vComidaBebida;
-          const div = document.createElement('div');
-          div.className = `item-participante ${p.pago ? 'pago' : ''}`;
-          div.innerHTML = `
-            <input type="checkbox" ${p.pago ? 'checked' : ''} onchange="alternarPago(${idx})" />
-            <strong>${p.nome}</strong>
-            <select onchange="alterarTipo(${idx}, this.value)">
-              <option value="Comida + Bebida" ${p.tipo === 'Comida + Bebida' ? 'selected' : ''}>Comida + Bebida</option>
-              <option value="Só Comida" ${p.tipo === 'Só Comida' ? 'selected' : ''}>Só Comida</option>
-            </select>
-            <span class="valor-tag" style="color: ${p.pago ? '#16a34a' : '#0f172a'}">
-              ${p.pago ? '✅ Pago' : 'R$ ' + valorDevido.toFixed(2).replace('.', ',')}
-            </span>
-            <button type="button" class="btn-del" onclick="removerParticipante(${idx})">❌</button>
-          `;
-          container.appendChild(div);
-        });
+      if (bloqueou && mostrarAlerta) {
+        elAviso.style.display = 'block';
+        alert('⚠️ Atenção: Não é permitido agendar churrasco em data ou horário que já passou! Ajustamos para o horário atual.');
+        setTimeout(() => { elAviso.style.display = 'none'; }, 5000);
       }
 
-      // Balanço
-      let arrecadado = 0;
-      appState.participantes.forEach(p => {
-        if (p.pago) arrecadado += (p.tipo === 'Só Comida' ? vSoComida : vComidaBebida);
+      salvarEAtualizar();
+    };
+
+    window.adicionarParticipante = function(event) {
+      if (event) event.preventDefault();
+      const inputNome = document.getElementById('novoNome');
+      const selectTipo = document.getElementById('novoTipo');
+      const nome = inputNome.value.trim();
+
+      if (!nome) {
+        alert('Digite o nome do participante antes de clicar em ➕.');
+        inputNome.focus();
+        return;
+      }
+
+      dados.participantes.push({
+        nome: nome,
+        tipo: selectTipo.value,
+        pago: false
       });
-      const totalGasto = cComida + cBebida;
-      const faltam = Math.max(0, totalGasto - arrecadado);
 
-      document.getElementById('txtArrecadado').innerText = `Arrecadado: R$ ${arrecadado.toFixed(2).replace('.', ',')}`;
-      document.getElementById('txtFaltam').innerText = faltam > 0 ? `Faltam: R$ ${faltam.toFixed(2).replace('.', ',')}` : 'Quitado! 🎉';
+      inputNome.value = '';
+      inputNome.focus();
+      salvarEAtualizar();
+    };
 
-      gerarPix(vSoComida, vComidaBebida);
-      renderizarHistorico();
+    window.alternarPago = function(idx) {
+      dados.participantes[idx].pago = !dados.participantes[idx].pago;
+      salvarEAtualizar();
+    };
+
+    window.mudarTipo = function(idx, novoTipo) {
+      dados.participantes[idx].tipo = novoTipo;
+      salvarEAtualizar();
+    };
+
+    window.excluirParticipante = function(idx) {
+      dados.participantes.splice(idx, 1);
+      salvarEAtualizar();
+    };
+
+    window.selecionarCota = function(tipo) {
+      cotaSelecionada = tipo;
+      document.getElementById('cardOptComida').classList.toggle('active', tipo === 'comida');
+      document.getElementById('cardOptBebida').classList.toggle('active', tipo === 'bebida');
+      salvarEAtualizar();
+    };
+
+    // Calculadora de Carnes (automática + manual)
+    window.atualizarNumerosCalculadora = function(qtdPessoas, qtdBebem) {
+      const bovina = (qtdPessoas * 0.30).toFixed(1).replace('.', ',');
+      const linguica = (qtdPessoas * 0.15).toFixed(1).replace('.', ',');
+      const totalCarneNum = qtdPessoas * 0.45;
+      const totalCarne = totalCarneNum.toFixed(1).replace('.', ',');
+      const litrosCervNum = qtdBebem * 3.5;
+      const latasCerv = Math.ceil((litrosCervNum * 1000) / 350);
+      const refri = (qtdPessoas * 0.6).toFixed(1).replace('.', ',');
+      const carvao = Math.max(0, totalCarneNum / 1.5).toFixed(1).replace('.', ',');
+
+      document.getElementById('calcBovina').innerText = bovina + ' kg';
+      document.getElementById('calcLinguica').innerText = linguica + ' kg';
+      document.getElementById('calcCarneTotal').innerText = totalCarne + ' kg';
+      document.getElementById('calcCerveja').innerText = litrosCervNum.toFixed(1).replace('.', ',') + ' L (' + latasCerv + ' latas)';
+      document.getElementById('calcRefri').innerText = refri + ' L';
+      document.getElementById('calcCarvao').innerText = carvao + ' kg';
+    };
+
+    window.calcularInsumosManual = function() {
+      const p = parseInt(document.getElementById('simPessoas').value) || 0;
+      const b = parseInt(document.getElementById('simBebem').value) || 0;
+      atualizarNumerosCalculadora(p, b);
+    };
+
+    // Gerador Pix BR Code Oficial
+    function emv(id, val) {
+      return id + String(val.length).padStart(2, '0') + val;
     }
 
-    // Pix BR Code
-    function emv(id, val) { return id + val.length.toString().padStart(2, '0') + val; }
     function crc16(str) {
       let crc = 0xFFFF;
       for (let i = 0; i < str.length; i++) {
@@ -562,174 +421,259 @@
       return crc.toString(16).toUpperCase().padStart(4, '0');
     }
 
-    let payloadPixAtual = '';
-    function gerarPix(vComida, vComidaBebida) {
+    function desenharQRCodePix(vComida, vComidaBebida) {
       const chave = document.getElementById('chavePix').value.trim();
-      const nome = document.getElementById('nomePix').value || 'ORGANIZADOR';
-      const valor = categoriaAtual === 'comida' ? vComida : vComidaBebida;
+      const recebedor = (document.getElementById('nomePix').value || 'ORGANIZADOR')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '').substring(0, 25).toUpperCase();
+      const valor = cotaSelecionada === 'comida' ? vComida : vComidaBebida;
 
-      document.getElementById('qrDescricao').innerText = `QR Code: ${categoriaAtual === 'comida' ? 'Só Comida' : 'Comida + Bebida'} (R$ ${valor.toFixed(2).replace('.', ',')})`;
+      document.getElementById('qrDescricao').innerText =
+        'QR Code: ' + (cotaSelecionada === 'comida' ? 'Só Comida' : 'Comida + Bebida') +
+        ' (R$ ' + valor.toFixed(2).replace('.', ',') + ')';
+
       const qrDiv = document.getElementById('qrcode');
       qrDiv.innerHTML = '';
 
       if (!chave) {
-        qrDiv.innerHTML = '<span style="font-size:0.8rem; color:#ea580c; font-weight:600;">Digite uma Chave Pix acima</span>';
-        payloadPixAtual = '';
+        qrDiv.innerHTML = '<span style="font-size:0.8rem; color:#ea580c; font-weight:600; padding:10px;">👆 Digite sua Chave Pix no campo acima para gerar o QR Code</span>';
+        codigoPixCopiaCola = '';
         return;
       }
 
       const valStr = valor > 0 ? valor.toFixed(2) : '';
-      const cleanName = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 25).toUpperCase();
       const merchant = emv('00', 'BR.GOV.BCB.PIX') + emv('01', chave);
-      let payload = emv('00', '01') + emv('26', merchant) + emv('52', '0000') + emv('53', '986') +
-                    (valStr ? emv('54', valStr) : '') + emv('58', 'BR') + emv('59', cleanName) +
-                    emv('60', 'BRASIL') + emv('62', emv('05', '***')) + '6304';
-      payloadPixAtual = payload + crc16(payload);
+      const payloadSemCrc =
+        emv('00', '01') +
+        emv('26', merchant) +
+        emv('52', '0000') +
+        emv('53', '986') +
+        (valStr ? emv('54', valStr) : '') +
+        emv('58', 'BR') +
+        emv('59', recebedor || 'ORGANIZADOR') +
+        emv('60', 'BRASIL') +
+        emv('62', emv('05', '***')) +
+        '6304';
 
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(qrDiv, { text: payloadPixAtual, width: 140, height: 140 });
+      codigoPixCopiaCola = payloadSemCrc + crc16(payloadSemCrc);
+
+      try {
+        if (typeof QRCode !== 'undefined') {
+          new QRCode(qrDiv, { text: codigoPixCopiaCola, width: 150, height: 150 });
+        }
+      } catch (e) {}
+
+      // Fallback automático em imagem caso a biblioteca falhe no celular
+      setTimeout(() => {
+        if (!qrDiv.querySelector('canvas') && !qrDiv.querySelector('img')) {
+          const img = document.createElement('img');
+          img.width = 150;
+          img.height = 150;
+          img.alt = 'QR Code Pix';
+          img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(codigoPixCopiaCola);
+          qrDiv.innerHTML = '';
+          qrDiv.appendChild(img);
+        }
+      }, 80);
+    }
+
+    window.salvarEAtualizar = function() {
+      dados.titulo = document.getElementById('titulo').value;
+      dados.data = document.getElementById('dataEvento').value;
+      dados.hora = document.getElementById('horaEvento').value;
+      dados.gastoComida = document.getElementById('gastoComida').value;
+      dados.gastoBebida = document.getElementById('gastoBebida').value;
+      dados.nomePix = document.getElementById('nomePix').value;
+      dados.chavePix = document.getElementById('chavePix').value;
+
+      try {
+        localStorage.setItem(CHAVE_STORAGE, JSON.stringify(dados));
+      } catch (e) {}
+
+      const comida = parseFloat(dados.gastoComida) || 0;
+      const bebida = parseFloat(dados.gastoBebida) || 0;
+
+      const totalPessoas = dados.participantes.length;
+      const totalBebem = dados.participantes.filter(p => p.tipo === 'Comida + Bebida').length;
+
+      document.getElementById('contadorPart').innerText = totalPessoas + (totalPessoas === 1 ? ' pessoa' : ' pessoas');
+
+      // Sincroniza a Aba de Calculadora de Carnes (usa mínimo de 1 se lista estiver vazia para demonstrar)
+      document.getElementById('simPessoas').value = totalPessoas;
+      document.getElementById('simBebem').value = totalBebem;
+      atualizarNumerosCalculadora(totalPessoas, totalBebem);
+
+      const cotaComida = totalPessoas > 0 ? (comida / totalPessoas) : 0;
+      const cotaBebida = totalBebem > 0 ? (bebida / totalBebem) : 0;
+
+      const vSoComida = cotaComida;
+      const vComidaBebida = cotaComida + cotaBebida;
+
+      document.getElementById('valSoComida').innerText = 'R$ ' + vSoComida.toFixed(2).replace('.', ',');
+      document.getElementById('valComidaBebida').innerText = 'R$ ' + vComidaBebida.toFixed(2).replace('.', ',');
+
+      const cont = document.getElementById('listaContainer');
+      cont.innerHTML = '';
+
+      if (totalPessoas === 0) {
+        cont.innerHTML = '<p style="font-size:0.82rem; color:#64748b; text-align:center; padding:8px;">Nenhum participante adicionado. Digite o nome acima e toque em ➕.</p>';
+      } else {
+        dados.participantes.forEach((p, i) => {
+          const valorInd = p.tipo === 'Só Comida' ? vSoComida : vComidaBebida;
+          const div = document.createElement('div');
+          div.className = 'item-part ' + (p.pago ? 'pago' : '');
+          div.innerHTML = `
+            <input type="checkbox" ${p.pago ? 'checked' : ''} onchange="alternarPago(${i})" />
+            <strong>${p.nome}</strong>
+            <select onchange="mudarTipo(${i}, this.value)">
+              <option value="Comida + Bebida" ${p.tipo === 'Comida + Bebida' ? 'selected' : ''}>Comida + Bebida</option>
+              <option value="Só Comida" ${p.tipo === 'Só Comida' ? 'selected' : ''}>Só Comida</option>
+            </select>
+            <span class="valor-tag" style="color:${p.pago ? '#16a34a' : '#0f172a'}">
+              ${p.pago ? '✅ Pago' : 'R$ ' + valorInd.toFixed(2).replace('.', ',')}
+            </span>
+            <button type="button" class="btn-del" onclick="excluirParticipante(${i})">❌</button>
+          `;
+          cont.appendChild(div);
+        });
       }
-    }
 
-    // Ações Participantes
-    function adicionarParticipante() {
-      const input = document.getElementById('novoNome');
-      const tipo = document.getElementById('novoTipo').value;
-      const nome = input.value.trim();
-      if (!nome) { input.focus(); return; }
+      let arrecadado = 0;
+      dados.participantes.forEach(p => {
+        if (p.pago) arrecadado += (p.tipo === 'Só Comida' ? vSoComida : vComidaBebida);
+      });
+      const faltam = Math.max(0, (comida + bebida) - arrecadado);
 
-      appState.participantes.push({ nome, tipo, pago: false });
-      input.value = '';
-      input.focus();
-      atualizarTudo();
-    }
+      document.getElementById('txtArrecadado').innerText = 'Arrecadado: R$ ' + arrecadado.toFixed(2).replace('.', ',');
+      document.getElementById('txtFaltam').innerText = faltam > 0 ? 'Faltam: R$ ' + faltam.toFixed(2).replace('.', ',') : 'Quitado! 🎉';
 
-    window.alterarTipo = function(idx, val) { appState.participantes[idx].tipo = val; atualizarTudo(); };
-    window.alternarPago = function(idx) { appState.participantes[idx].pago = !appState.participantes[idx].pago; atualizarTudo(); };
-    window.removerParticipante = function(idx) { appState.participantes.splice(idx, 1); atualizarTudo(); };
-
-    // Histórico
-    function salvarHistorico() {
-      const reg = JSON.parse(JSON.stringify(appState));
-      reg.salvoEm = new Date().toLocaleString('pt-BR');
-      const idx = historico.findIndex(h => h.id === reg.id);
-      if (idx >= 0) historico[idx] = reg;
-      else historico.unshift(reg);
-
-      localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico));
+      desenharQRCodePix(vSoComida, vComidaBebida);
       renderizarHistorico();
-      alert('Churrasco salvo no Histórico!');
-    }
+    };
 
-    function novoChurrasco() {
-      if (appState.participantes.length > 0 && !confirm('Iniciar novo churrasco em branco?')) return;
-      appState = {
+    window.copiarPix = function() {
+      if (!codigoPixCopiaCola) {
+        alert('Digite uma Chave Pix no campo "Chave Pix" primeiro!');
+        return;
+      }
+      navigator.clipboard.writeText(codigoPixCopiaCola).then(() => {
+        alert('✅ Código Pix Copia e Cola copiado!');
+      });
+    };
+
+    window.compartilharWhats = function() {
+      const listaTxt = dados.participantes.length > 0
+        ? dados.participantes.map(p => '- ' + p.nome + ' (' + p.tipo + '): ' + (p.pago ? 'PAGO ✅' : 'PENDENTE')).join('\n')
+        : 'Sem participantes cadastrados.';
+      const msg =
+        '🥩 *' + dados.titulo + '*\n' +
+        '📅 Data: ' + dados.data.split('-').reverse().join('/') + ' às ' + dados.hora + '\n' +
+        '🍽️ Só Comida: ' + document.getElementById('valSoComida').innerText + '\n' +
+        '🍻 Comida + Bebida: ' + document.getElementById('valComidaBebida').innerText + '\n\n' +
+        '👥 *Participantes:*\n' + listaTxt +
+        (dados.chavePix ? '\n\n💳 *Chave Pix:* ' + dados.chavePix : '');
+      window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank');
+    };
+
+    window.salvarNoHistorico = function() {
+      const copia = JSON.parse(JSON.stringify(dados));
+      const idx = listaHistorico.findIndex(h => h.id === copia.id);
+      if (idx >= 0) listaHistorico[idx] = copia;
+      else listaHistorico.unshift(copia);
+
+      try { localStorage.setItem(CHAVE_HIST, JSON.stringify(listaHistorico)); } catch (e) {}
+      renderizarHistorico();
+      alert('✅ Churrasco salvo no Histórico!');
+    };
+
+    window.novoChurrasco = function() {
+      if (dados.participantes.length > 0 && !confirm('Limpar a lista atual para iniciar um novo churrasco?')) return;
+      dados = {
         id: Date.now(),
         titulo: 'Churrasco da Galera',
-        data: hojeISO(),
-        hora: horaAtualStr(),
+        data: obterHojeISO(),
+        hora: obterHoraAgora(),
         gastoComida: 300,
         gastoBebida: 180,
         nomePix: document.getElementById('nomePix').value,
         chavePix: document.getElementById('chavePix').value,
         participantes: []
       };
-      document.getElementById('titulo').value = appState.titulo;
-      document.getElementById('dataEvento').value = appState.data;
-      document.getElementById('horaEvento').value = appState.hora;
-      document.getElementById('gastoComida').value = appState.gastoComida;
-      document.getElementById('gastoBebida').value = appState.gastoBebida;
-      atualizarTudo();
-    }
-
-    window.abrirHistorico = function(id) {
-      const enc = historico.find(h => h.id === id);
-      if (!enc) return;
-      appState = JSON.parse(JSON.stringify(enc));
-      document.getElementById('titulo').value = appState.titulo;
-      document.getElementById('dataEvento').value = appState.data;
-      document.getElementById('horaEvento').value = appState.hora;
-      document.getElementById('gastoComida').value = appState.gastoComida;
-      document.getElementById('gastoBebida').value = appState.gastoBebida;
-      document.getElementById('nomePix').value = appState.nomePix;
-      document.getElementById('chavePix').value = appState.chavePix;
-      atualizarTudo();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      aplicarDadosNosCampos();
+      salvarEAtualizar();
     };
 
-    window.excluirHistorico = function(id) {
-      if (!confirm('Excluir do histórico?')) return;
-      historico = historico.filter(h => h.id !== id);
-      localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico));
+    window.abrirItemHistorico = function(id) {
+      const item = listaHistorico.find(h => h.id === id);
+      if (!item) return;
+      dados = JSON.parse(JSON.stringify(item));
+      aplicarDadosNosCampos();
+      salvarEAtualizar();
+      trocarAba('rateio');
+    };
+
+    window.removerItemHistorico = function(id) {
+      listaHistorico = listaHistorico.filter(h => h.id !== id);
+      try { localStorage.setItem(CHAVE_HIST, JSON.stringify(listaHistorico)); } catch (e) {}
       renderizarHistorico();
     };
 
     function renderizarHistorico() {
-      const cont = document.getElementById('historicoContainer');
-      cont.innerHTML = '';
-      if (historico.length === 0) {
-        cont.innerHTML = '<p style="font-size:0.82rem; color:#64748b; text-align:center;">Nenhum histórico salvo.</p>';
+      const box = document.getElementById('historicoContainer');
+      if (!listaHistorico.length) {
+        box.innerHTML = '<p style="font-size:0.82rem; color:#64748b;">Nenhum churrasco salvo no histórico ainda.</p>';
         return;
       }
-      historico.forEach(h => {
-        const total = (parseFloat(h.gastoComida)||0) + (parseFloat(h.gastoBebida)||0);
-        const div = document.createElement('div');
-        div.className = 'item-historico';
-        div.innerHTML = `
-          <div class="info-historico">
-            <strong>🥩 ${h.titulo}</strong>
-            <span>📅 ${h.data.split('-').reverse().join('/')} • R$ ${total.toFixed(2).replace('.', ',')} • 👥 ${h.participantes.length}</span>
-          </div>
-          <div class="acoes-historico">
-            <button class="btn-hist-abrir" onclick="abrirHistorico(${h.id})">📂</button>
-            <button class="btn-hist-del" onclick="excluirHistorico(${h.id})">🗑️</button>
+      box.innerHTML = listaHistorico.map(h => {
+        const total = (parseFloat(h.gastoComida) || 0) + (parseFloat(h.gastoBebida) || 0);
+        return `
+          <div class="item-hist">
+            <div>
+              <strong>🥩 ${h.titulo}</strong><br>
+              <span style="color:#64748b; font-size:0.76rem;">📅 ${h.data.split('-').reverse().join('/')} • R$ ${total.toFixed(2).replace('.', ',')} • 👥 ${(h.participantes || []).length} pessoas</span>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn-topo escuro" onclick="abrirItemHistorico(${h.id})">Abrir</button>
+              <button type="button" class="btn-topo" onclick="removerItemHistorico(${h.id})">🗑️</button>
+            </div>
           </div>
         `;
-        cont.appendChild(div);
-      });
+      }).join('');
     }
 
-    // Eventos
-    document.getElementById('btnAddParticipante').addEventListener('click', adicionarParticipante);
-    document.getElementById('novoNome').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); adicionarParticipante(); } });
-    document.getElementById('btnSalvarHistorico').addEventListener('click', salvarHistorico);
-    document.getElementById('btnNovoChurrasco').addEventListener('click', novoChurrasco);
+    function aplicarDadosNosCampos() {
+      document.getElementById('titulo').value = dados.titulo || 'Churrasco da Galera';
+      document.getElementById('dataEvento').value = dados.data || obterHojeISO();
+      document.getElementById('horaEvento').value = dados.hora || obterHoraAgora();
+      document.getElementById('gastoComida').value = dados.gastoComida ?? 300;
+      document.getElementById('gastoBebida').value = dados.gastoBebida ?? 180;
+      document.getElementById('nomePix').value = dados.nomePix || 'ORGANIZADOR';
+      document.getElementById('chavePix').value = dados.chavePix || '';
+    }
 
-    document.getElementById('btnOptComida').addEventListener('click', () => {
-      categoriaAtual = 'comida';
-      document.getElementById('btnOptComida').classList.add('active');
-      document.getElementById('btnOptBebida').classList.remove('active');
-      atualizarTudo();
-    });
+    function iniciarApp() {
+      try {
+        const histSalvo = localStorage.getItem(CHAVE_HIST);
+        if (histSalvo) listaHistorico = JSON.parse(histSalvo) || [];
 
-    document.getElementById('btnOptBebida').addEventListener('click', () => {
-      categoriaAtual = 'bebida';
-      document.getElementById('btnOptBebida').classList.add('active');
-      document.getElementById('btnOptComida').classList.remove('active');
-      atualizarTudo();
-    });
+        const atualSalvo = localStorage.getItem(CHAVE_STORAGE);
+        if (atualSalvo) {
+          const parsed = JSON.parse(atualSalvo);
+          if (parsed && typeof parsed === 'object') {
+            dados = parsed;
+            if (!Array.isArray(dados.participantes)) dados.participantes = [];
+          }
+        }
+      } catch (e) {}
 
-    document.getElementById('btnCopiarPix').addEventListener('click', () => {
-      if (!payloadPixAtual) return alert('Digite uma Chave Pix válida.');
-      navigator.clipboard.writeText(payloadPixAtual).then(() => alert('Pix Copia e Cola copiado!'));
-    });
+      if (!dados.data || dados.data < obterHojeISO()) dados.data = obterHojeISO();
+      if (!dados.hora) dados.hora = obterHoraAgora();
 
-    document.getElementById('btnEnviarWhats').addEventListener('click', () => {
-      const listaStr = appState.participantes.map(p => `- ${p.nome} (${p.tipo}): ${p.pago ? 'PAGO ✅' : 'PENDENTE'}`).join('\n');
-      const msg = `🥩 *${appState.titulo}*\n📅 Data: ${appState.data.split('-').reverse().join('/')} às ${appState.hora}\n\n👥 *Participantes:*\n${listaStr}\n\n${appState.chavePix ? '💳 Chave Pix: ' + appState.chavePix : ''}`;
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-    });
+      aplicarDadosNosCampos();
+      verificarDataHora(false);
+      document.getElementById('badgeStatus').innerText = '✓ v6.0 Ativo';
+    }
 
-    document.getElementById('btnAbrirAjuda').addEventListener('click', () => document.getElementById('modalAjuda').classList.add('aberto'));
-    document.getElementById('btnFecharAjuda').addEventListener('click', () => document.getElementById('modalAjuda').classList.remove('aberto'));
-    document.getElementById('modalAjuda').addEventListener('click', e => { if (e.target.id === 'modalAjuda') e.target.classList.remove('aberto'); });
-
-    ['titulo', 'dataEvento', 'horaEvento', 'gastoComida', 'gastoBebida', 'nomePix', 'chavePix'].forEach(id => {
-      document.getElementById(id).addEventListener('input', atualizarTudo);
-      document.getElementById(id).addEventListener('change', atualizarTudo);
-    });
-
-    initApp();
+    iniciarApp();
   </script>
 </body>
 </html>
